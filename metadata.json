@@ -1,0 +1,6 @@
+{
+  "name": "Layout Replicator",
+  "description": "Upload a screenshot and instantly replicate it as clean, editable HTML and Tailwind CSS code using AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
