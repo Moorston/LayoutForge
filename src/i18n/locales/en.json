@@ -1,0 +1,105 @@
+{
+  "app": {
+    "title": "LayoutForge",
+    "version": "v2.0",
+    "tagline": "Design with Precision.",
+    "description": "Every pixel accounted for. Replicate CSS variables, font-families, and image assets instantly from any visual source or URL.",
+    "copyright": "© 2026 LayoutForge • FreeBytes"
+  },
+  "nav": {
+    "newCapture": "← New Capture",
+    "brandKit": "Brand Kit",
+    "batchMode": "Batch Mode",
+    "aiModel": "AI Model"
+  },
+  "tabs": {
+    "canvas": "Canvas",
+    "sourceCode": "Source Code",
+    "variables": "Variables",
+    "seo": "SEO",
+    "a11y": "A11y",
+    "export": "Export"
+  },
+  "url": {
+    "placeholder": "Paste website URL (e.g. apple.com)...",
+    "clone": "Clone",
+    "output": "Output:",
+    "refinementPass": "AI Refinement Pass",
+    "refinementHint": "2-step: generate → polish for pixel-perfect quality"
+  },
+  "stack": {
+    "reactTailwind": "React + Tailwind",
+    "html": "HTML + Tailwind",
+    "react": "React",
+    "nextjs": "Next.js",
+    "vue": "Vue 3"
+  },
+  "actions": {
+    "save": "Save",
+    "saveProject": "Save Project",
+    "saveProjectHint": "Persist this design to your local library.",
+    "confirmSave": "Confirm Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "exportTemplate": "Export Template",
+    "copied": "Copied",
+    "copy": "Copy",
+    "download": "Download .html"
+  },
+  "projects": {
+    "recentProjects": "Recent Projects",
+    "saved": "Saved",
+    "projectName": "Project Name..."
+  },
+  "features": {
+    "layoutAware": "Layout Aware",
+    "layoutAwareDesc": "Understands complex grids, flexbox, and absolute positioning.",
+    "cleanCode": "Clean Code",
+    "cleanCodeDesc": "Generates semantic HTML with standard Tailwind utility classes.",
+    "assetExtraction": "Asset Extraction",
+    "assetExtractionDesc": "Automatically crops images and detects icons in your screenshots."
+  },
+  "processing": {
+    "replicationFailed": "Replication Failed",
+    "tryAnotherImage": "Try Another Image",
+    "anErrorOccurred": "An unexpected error occurred"
+  },
+  "code": {
+    "indexHtml": "Index.html",
+    "stylesCss": "Styles.css",
+    "linkAsset": "Link Asset",
+    "selectAssetToLink": "Select Asset to Link",
+    "clickToLink": "Click to Link",
+    "aiInsights": "AI Design Insights",
+    "imageAssets": "Image Assets",
+    "upload": "Upload",
+    "clickToReplace": "Click to Replace",
+    "syncToPlaceholder": "Sync to HTML Placeholder",
+    "insertNew": "Insert New",
+    "ratio": "Ratio",
+    "clipped": "Clipped",
+    "detectedCharts": "Detected Charts",
+    "exportDataCsv": "Export Data as CSV",
+    "insertIntoHtml": "Insert into HTML",
+    "chart": "Chart"
+  },
+  "preview": {
+    "originalReference": "Original Reference",
+    "replicatedFromUrl": "Replicated from URL",
+    "replicatedFromUrlHint": "This project was generated from a website structure rather than a visual screenshot.",
+    "draftProduction": "Draft Production",
+    "diff": "Diff",
+    "imageType": "图像类型"
+  },
+  "chat": {
+    "title": "AI Chat Refinement"
+  },
+  "batch": {
+    "title": "Batch Processing",
+    "back": "← Back"
+  },
+  "library": {
+    "title": "Library",
+    "empty": "No saved projects yet."
+  }
+}

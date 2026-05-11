@@ -20,6 +20,8 @@ const INSTALL_NOTES: Record<ExportFormat, string> = {
   html: "Open directly in any browser. Tailwind CSS is loaded via CDN — zero build step required.",
   react:
     "Install: npm install react react-dom && npm install -D typescript @types/react @types/react-dom vite @vitejs/plugin-react",
+  "react-tailwind":
+    "Install: npm install react react-dom tailwindcss postcss autoprefixer && npx tailwindcss init -p. Then place the component in src/.",
   vue: "Use with Vite + plugin-vue: npm create vite@latest my-app -- --template vue-ts, then copy this SFC.",
   nextjs:
     "Run: npx create-next-app@latest. Place this file under /app/[route]/page.tsx in the App Router.",
@@ -28,11 +30,18 @@ const INSTALL_NOTES: Record<ExportFormat, string> = {
 const ACCENT_BORDER: Record<ExportFormat, string> = {
   html: "border-l-orange-400",
   react: "border-l-blue-400",
+  "react-tailwind": "border-l-cyan-400",
   vue: "border-l-emerald-400",
   nextjs: "border-l-slate-900",
 };
 
-const FORMATS: ExportFormat[] = ["html", "react", "vue", "nextjs"];
+const FORMATS: ExportFormat[] = [
+  "html",
+  "react",
+  "react-tailwind",
+  "vue",
+  "nextjs",
+];
 
 export function ExportPanel({ html, css, projectName }: ExportPanelProps) {
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("html");

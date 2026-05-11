@@ -24,6 +24,19 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ["react", "react-dom"],
+            motion: ["motion/react"],
+            recharts: ["recharts"],
+            monaco: ["@monaco-editor/react"],
+          },
+        },
+      },
+      chunkSizeWarningLimit: 1000,
+    },
     define: {
       global: "window",
 

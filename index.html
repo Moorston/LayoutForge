@@ -1,34 +1,52 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Layout Replicator - Copy any UI instantly</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <script>
-      // Fix for sandboxed environments where some libraries try to overwrite window.fetch
-      try {
-        const originalFetch = window.fetch;
-        if (originalFetch) {
-          Object.defineProperty(window, 'fetch', {
-            configurable: true,
-            enumerable: true,
-            get: () => originalFetch,
-            set: (v) => { 
-              console.warn('Attempted to overwrite window.fetch ignored:', v);
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Layout Replicator - Copy any UI instantly</title>
+        <meta
+            name="description"
+            content="Upload a screenshot or provide a URL, and AI replicates the layout as clean, editable HTML + Tailwind CSS code."
+        />
+        <meta name="theme-color" content="#0f172a" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="black-translucent"
+        />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <script>
+            // Fix for sandboxed environments where some libraries try to overwrite window.fetch
+            try {
+                const originalFetch = window.fetch;
+                if (originalFetch) {
+                    Object.defineProperty(window, "fetch", {
+                        configurable: true,
+                        enumerable: true,
+                        get: () => originalFetch,
+                        set: (v) => {
+                            console.warn(
+                                "Attempted to overwrite window.fetch ignored:",
+                                v,
+                            );
+                        },
+                    });
+                }
+            } catch (e) {
+                // Ignore errors if we can't redefine it
             }
-          });
-        }
-      } catch (e) {
-        // Ignore errors if we can't redefine it
-      }
-    </script>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+        </script>
+        <div id="root"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
 </html>
-

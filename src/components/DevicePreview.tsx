@@ -255,6 +255,7 @@ export function DevicePreview({
   const [orientation, setOrientation] = useState<Orientation>("portrait");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState<number>(800);
 
   const preset = DEVICE_PRESETS[activeDevice];
   const isMobile = preset.width <= 768;
@@ -303,13 +304,41 @@ export function DevicePreview({
     };
   }, [isFullscreen]);
 
+  // Reset content height when iframe content or device changes
+  useEffect(() => {
+    setContentHeight(rawH);
+  }, [iframeContent, rawH, activeDevice, orientation]);
+
+  // Auto-resize iframe height to fit content
+  const handleIframeLoad = useCallback(
+    (e: React.SyntheticEvent<HTMLIFrameElement>) => {
+      try {
+        const iframe = e.currentTarget;
+        const doc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (doc) {
+          const bodyH = doc.body?.scrollHeight || 0;
+          const docH = doc.documentElement?.scrollHeight || 0;
+          const h = Math.max(bodyH, docH, rawH);
+          setContentHeight(Math.min(h, 8000));
+        }
+      } catch {
+        // access error — keep default height
+      }
+    },
+    [rawH],
+  );
+
+  const effectiveH = Math.max(contentHeight, frameH);
+
   const iframeEl = (
     <iframe
       title="Preview"
       srcDoc={iframeContent}
+      scrolling="yes"
+      onLoad={handleIframeLoad}
       style={{
         width: `${frameW}px`,
-        height: `${frameH}px`,
+        height: `${effectiveH}px`,
         border: "none",
         display: "block",
         background: "#fff",

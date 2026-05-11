@@ -1,0 +1,105 @@
+{
+  "app": {
+    "title": "LayoutForge",
+    "version": "v2.0",
+    "tagline": "精准设计。",
+    "description": "每个像素都精确还原。即时从任何视觉来源或网址复制 CSS 变量、字体和图片资源。",
+    "copyright": "© 2026 LayoutForge • FreeBytes"
+  },
+  "nav": {
+    "newCapture": "← 新建",
+    "brandKit": "品牌套件",
+    "batchMode": "批量模式",
+    "aiModel": "AI 模型"
+  },
+  "tabs": {
+    "canvas": "画布",
+    "sourceCode": "源代码",
+    "variables": "变量",
+    "seo": "SEO",
+    "a11y": "无障碍",
+    "export": "导出"
+  },
+  "url": {
+    "placeholder": "粘贴网站链接（例如 apple.com）...",
+    "clone": "克隆",
+    "output": "输出：",
+    "refinementPass": "AI 优化通道",
+    "refinementHint": "两步流程：生成 → 优化至像素级质量"
+  },
+  "stack": {
+    "reactTailwind": "React + Tailwind",
+    "html": "HTML + Tailwind",
+    "react": "React",
+    "nextjs": "Next.js",
+    "vue": "Vue 3"
+  },
+  "actions": {
+    "save": "保存",
+    "saveProject": "保存项目",
+    "saveProjectHint": "将此设计保存到本地库。",
+    "confirmSave": "确认保存",
+    "saving": "保存中...",
+    "cancel": "取消",
+    "exportTemplate": "导出模板",
+    "copied": "已复制",
+    "copy": "复制",
+    "download": "下载 .html"
+  },
+  "projects": {
+    "recentProjects": "最近项目",
+    "saved": "已保存",
+    "projectName": "项目名称..."
+  },
+  "features": {
+    "layoutAware": "布局感知",
+    "layoutAwareDesc": "理解复杂网格、Flexbox 和绝对定位。",
+    "cleanCode": "整洁代码",
+    "cleanCodeDesc": "生成语义化 HTML 和标准 Tailwind 工具类。",
+    "assetExtraction": "资源提取",
+    "assetExtractionDesc": "自动裁剪图片并检测截图中的图标。"
+  },
+  "processing": {
+    "replicationFailed": "复制失败",
+    "tryAnotherImage": "尝试其他图片",
+    "anErrorOccurred": "发生了意外错误"
+  },
+  "code": {
+    "indexHtml": "Index.html",
+    "stylesCss": "Styles.css",
+    "linkAsset": "链接资源",
+    "selectAssetToLink": "选择要链接的资源",
+    "clickToLink": "点击链接",
+    "aiInsights": "AI 设计洞察",
+    "imageAssets": "图片资源",
+    "upload": "上传",
+    "clickToReplace": "点击替换",
+    "syncToPlaceholder": "同步到 HTML 占位符",
+    "insertNew": "插入新图",
+    "ratio": "比例",
+    "clipped": "已裁剪",
+    "detectedCharts": "检测到的图表",
+    "exportDataCsv": "导出数据为 CSV",
+    "insertIntoHtml": "插入到 HTML",
+    "chart": "图表"
+  },
+  "preview": {
+    "originalReference": "原始参考",
+    "replicatedFromUrl": "从链接复制",
+    "replicatedFromUrlHint": "此项目从网站结构生成，而非视觉截图。",
+    "draftProduction": "生产草稿",
+    "diff": "对比",
+    "imageType": "图像类型"
+  },
+  "chat": {
+    "title": "AI 对话优化"
+  },
+  "batch": {
+    "title": "批量处理",
+    "back": "← 返回"
+  },
+  "library": {
+    "title": "项目库",
+    "empty": "暂无保存的项目。"
+  }
+}

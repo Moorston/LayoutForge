@@ -20,7 +20,7 @@ export interface BrandKit {
   /** Font family for body text */
   bodyFont: string;
   /** Global border-radius style */
-  borderRadius: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  borderRadius: "none" | "sm" | "md" | "lg" | "xl" | "full";
   /** Logo image (data-URL or https URL) */
   logoUrl?: string;
   logoAlt?: string;
@@ -31,18 +31,18 @@ export interface BrandKit {
 }
 
 export const DEFAULT_BRAND_KIT: BrandKit = {
-  primaryColor: '#0f172a',
-  secondaryColor: '#475569',
-  accentColor: '#6366f1',
-  backgroundColor: '#ffffff',
-  textColor: '#0f172a',
-  headingFont: 'Inter',
-  bodyFont: 'Inter',
-  borderRadius: 'lg',
-  companyName: 'My Company',
-  tagline: '',
-  contactEmail: '',
-  website: '',
+  primaryColor: "#0f172a",
+  secondaryColor: "#475569",
+  accentColor: "#6366f1",
+  backgroundColor: "#ffffff",
+  textColor: "#0f172a",
+  headingFont: "Inter",
+  bodyFont: "Inter",
+  borderRadius: "lg",
+  companyName: "My Company",
+  tagline: "",
+  contactEmail: "",
+  website: "",
 };
 
 // ─── Template Variables ───────────────────────────────────────────────────────
@@ -55,7 +55,7 @@ export interface TemplateVariable {
   /** Current value entered by the user */
   value: string;
   /** Input type hint */
-  type: 'text' | 'url' | 'email' | 'color' | 'image' | 'textarea';
+  type: "text" | "url" | "email" | "color" | "image" | "textarea";
   placeholder?: string;
 }
 
@@ -63,7 +63,7 @@ export interface TemplateVariable {
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: number;
   /** True while a streaming response is still arriving */
@@ -73,7 +73,7 @@ export interface ChatMessage {
 // ─── Accessibility ────────────────────────────────────────────────────────────
 
 export interface AccessibilityIssue {
-  severity: 'error' | 'warning' | 'info';
+  severity: "error" | "warning" | "info";
   /** Short machine-readable rule name, e.g. "img-alt" */
   rule: string;
   /** Human-readable description */
@@ -100,24 +100,32 @@ export interface SEOData {
   ogDescription: string;
   ogImage?: string;
   canonicalUrl?: string;
-  twitterCard: 'summary' | 'summary_large_image';
+  twitterCard: "summary" | "summary_large_image";
   author?: string;
   robots?: string;
 }
 
 export const DEFAULT_SEO_DATA: SEOData = {
-  title: '',
-  description: '',
+  title: "",
+  description: "",
   keywords: [],
-  ogTitle: '',
-  ogDescription: '',
-  twitterCard: 'summary_large_image',
-  robots: 'index, follow',
+  ogTitle: "",
+  ogDescription: "",
+  twitterCard: "summary_large_image",
+  robots: "index, follow",
 };
 
 // ─── Export ───────────────────────────────────────────────────────────────────
 
-export type ExportFormat = 'html' | 'react' | 'vue' | 'nextjs';
+export type ExportFormat =
+  | "html"
+  | "react"
+  | "react-tailwind"
+  | "vue"
+  | "nextjs";
+
+/** Generation mode: 'replicate' for pixel-perfect copy, 'template' for reusable style template */
+export type GenerationMode = "replicate" | "template";
 
 export interface ExportResult {
   format: ExportFormat;
@@ -132,7 +140,7 @@ export interface BatchItem {
   id: string;
   name: string;
   file: File;
-  status: 'pending' | 'processing' | 'done' | 'error';
+  status: "pending" | "processing" | "done" | "error";
   /** Generated code result */
   result?: {
     html: string;
@@ -164,8 +172,8 @@ export interface DevicePreset {
 }
 
 export const DEVICE_PRESETS: DevicePreset[] = [
-  { label: 'Mobile', icon: '📱', width: 375, height: 812 },
-  { label: 'Tablet', icon: '📟', width: 768, height: 1024 },
-  { label: 'Desktop', icon: '💻', width: 1280, height: 800 },
-  { label: 'Wide', icon: '🖥️', width: 1920, height: 1080 },
+  { label: "Mobile", icon: "📱", width: 375, height: 812 },
+  { label: "Tablet", icon: "📟", width: 768, height: 1024 },
+  { label: "Desktop", icon: "💻", width: 1280, height: 800 },
+  { label: "Wide", icon: "🖥️", width: 1920, height: 1080 },
 ];

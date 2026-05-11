@@ -3,7 +3,7 @@
 </div>
 
 # Layout Replicator
-
+Layout Forge is a feature-rich and well-architected AI-powered web layout replication tool.
 > Upload a screenshot or provide a URL, and AI replicates the layout as clean, editable HTML + Tailwind CSS code.
 
 Supports brand kit customization, SEO generation, accessibility checking, component extraction, batch processing, and a chat-based refinement panel.

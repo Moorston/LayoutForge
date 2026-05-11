@@ -3,7 +3,7 @@
 </div>
 
 # Layout Replicator
-
+Layout Forge 是一个功能丰富、架构合理的AI网页布局复制工具。
 > 上传截图或提供 URL，AI 自动将其复现为干净、可编辑的 HTML + Tailwind CSS 代码。
 
 支持品牌定制、SEO 生成、无障碍检查、组件提取、批量处理以及基于聊天的优化面板。

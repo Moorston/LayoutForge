@@ -6,9 +6,6 @@ build/
 dist/
 coverage/
 
-# node_modules ───────────────────────────────────────────────────────────────
-node_modules/
-
 # ── OS / Editor ───────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
@@ -30,3 +27,6 @@ Thumbs.db
 
 # Keep only the example template
 !.env.example
+
+# ── Runtime Config (contains API keys) ─────────────────────────────────────
+.runtime-config.json

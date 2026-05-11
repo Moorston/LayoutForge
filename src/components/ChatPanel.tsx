@@ -12,6 +12,11 @@ import {
 import { refineLayout } from "@/services/mimoService";
 import { ChatMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import {
+  CHAT_MAX_CHARS,
+  CHAT_WARNING_CHARS,
+  CHAT_TEXTAREA_MAX_HEIGHT,
+} from "@/lib/constants";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -238,7 +243,7 @@ export function ChatPanel({
     // Auto-expand up to ~120 px
     const el = e.target;
     el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+    el.style.height = `${Math.min(el.scrollHeight, CHAT_TEXTAREA_MAX_HEIGHT)}px`;
   };
 
   const injectSuggestion = (text: string) => {
@@ -350,7 +355,7 @@ export function ChatPanel({
               <textarea
                 ref={textareaRef}
                 rows={3}
-                maxLength={500}
+                maxLength={CHAT_MAX_CHARS}
                 disabled={isLoading}
                 className={cn(
                   "w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-xl px-4 py-3",
@@ -369,10 +374,12 @@ export function ChatPanel({
                 <span
                   className={cn(
                     "text-[11px] tabular-nums transition-colors",
-                    input.length > 450 ? "text-amber-400" : "text-slate-600",
+                    input.length > CHAT_WARNING_CHARS
+                      ? "text-amber-400"
+                      : "text-slate-600",
                   )}
                 >
-                  {input.length} / 500
+                  {input.length} / {CHAT_MAX_CHARS}
                 </span>
 
                 <div className="flex items-center gap-2">

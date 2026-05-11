@@ -1,0 +1,38 @@
+{
+  "name": "LayoutForge - AI Layout Replicator",
+  "short_name": "LayoutForge",
+  "description": "Upload a screenshot or provide a URL, and AI replicates the layout as clean, editable HTML + Tailwind CSS code.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F3F4F6",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["design", "development", "productivity"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "New Project",
+      "short_name": "New",
+      "url": "/?action=new"
+    }
+  ]
+}
