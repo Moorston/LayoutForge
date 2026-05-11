@@ -117,12 +117,7 @@ export const DEFAULT_SEO_DATA: SEOData = {
 
 // ─── Export ───────────────────────────────────────────────────────────────────
 
-export type ExportFormat =
-  | "html"
-  | "react"
-  | "react-tailwind"
-  | "vue"
-  | "nextjs";
+export type ExportFormat = "html" | "react-tailwind" | "vue";
 
 /** Generation mode: 'replicate' for pixel-perfect copy, 'template' for reusable style template */
 export type GenerationMode = "replicate" | "template";

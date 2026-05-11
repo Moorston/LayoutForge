@@ -87,40 +87,6 @@ ${indentCode(html, 2)}
   };
 }
 
-function exportAsReact(
-  html: string,
-  css: string,
-  componentName = "MyComponent",
-): ExportResult {
-  const name = pascalCase(componentName) || "MyComponent";
-  const jsx = htmlToJsx(html);
-
-  const content = `import React from 'react';
-
-${css.trim() ? `// Styles (copy to your CSS file or use a CSS-in-JS solution)\nconst styles = \`\n${css.trim()}\n\`;\n` : ""}
-interface ${name}Props {
-  // Add props here
-}
-
-export function ${name}({}: ${name}Props): React.JSX.Element {
-  return (
-    <>
-${indentCode(jsx, 6)}
-    </>
-  );
-}
-
-export default ${name};
-`;
-
-  return {
-    format: "react",
-    filename: `${name}.tsx`,
-    content,
-    language: "tsx",
-  };
-}
-
 function exportAsVue(
   html: string,
   css: string,
@@ -145,41 +111,6 @@ ${css.trim() ? `<style scoped>\n${css.trim()}\n</style>` : ""}
     filename: `${name}.vue`,
     content,
     language: "vue",
-  };
-}
-
-function exportAsNextjs(
-  html: string,
-  css: string,
-  pageName = "page",
-): ExportResult {
-  const jsx = htmlToJsx(html);
-  const routeName = pageName.toLowerCase().replace(/[^a-z0-9]/g, "-") || "page";
-
-  const content = `import type { Metadata } from 'next';
-${css.trim() ? `import styles from './${routeName}.module.css';\n` : ""}
-export const metadata: Metadata = {
-  title: '${pascalCase(pageName)}',
-};
-
-export default function ${pascalCase(pageName)}Page() {
-  return (
-    <>
-${indentCode(jsx, 6)}
-    </>
-  );
-}
-`;
-
-  const cssResult = css.trim()
-    ? `\n\n/* ${routeName}.module.css */\n${css.trim()}`
-    : "";
-
-  return {
-    format: "nextjs",
-    filename: `${routeName}/page.tsx`,
-    content: content + cssResult,
-    language: "tsx",
   };
 }
 
@@ -274,14 +205,10 @@ export function exportCode(
   switch (format) {
     case "html":
       return exportAsHtml(html, css, name);
-    case "react":
-      return exportAsReact(html, css, name);
     case "react-tailwind":
       return exportAsReactTailwind(html, css, name);
     case "vue":
       return exportAsVue(html, css, name);
-    case "nextjs":
-      return exportAsNextjs(html, css, name);
     default:
       return exportAsHtml(html, css, name);
   }
@@ -309,12 +236,6 @@ export const FORMAT_META: Record<
     desc: "Single-file HTML with Tailwind CDN",
     color: "text-orange-600 bg-orange-50 border-orange-200",
   },
-  react: {
-    label: "React",
-    icon: "⚛️",
-    desc: "TypeScript functional component (.tsx)",
-    color: "text-blue-600 bg-blue-50 border-blue-200",
-  },
   "react-tailwind": {
     label: "React + Tailwind",
     icon: "⚛️",
@@ -326,11 +247,5 @@ export const FORMAT_META: Record<
     icon: "💚",
     desc: "Single File Component with <script setup>",
     color: "text-emerald-600 bg-emerald-50 border-emerald-200",
-  },
-  nextjs: {
-    label: "Next.js",
-    icon: "▲",
-    desc: "App Router page component + CSS module",
-    color: "text-slate-900 bg-slate-100 border-slate-300",
   },
 };

@@ -146,12 +146,14 @@ export function buildGenerationWithAnalysisPrompt(
     ? `\n=== ADDITIONAL CONTEXT ===\n${extraContext}\n=== END ADDITIONAL CONTEXT ===\n`
     : "";
   const stackInstructions = getStackInstructions(stack);
+  const stackQuality = getStackSpecificQualityRequirements(stack);
 
   return `You are replicating a webpage with PIXEL-PERFECT accuracy. A detailed visual analysis of the original screenshot is provided below.
 Use BOTH the analysis text AND the original image to generate code that matches the original as precisely as possible.
 
 ${brandSection}${analysis}${extraSection}
 ${stackInstructions}
+${stackQuality}
 
 === CRITICAL REQUIREMENTS ===
 
@@ -241,10 +243,12 @@ export function buildGenerationPrompt(
     : "";
 
   const stackInstructions = getStackInstructions(stack);
+  const stackQuality = getStackSpecificQualityRequirements(stack);
 
   return `You are replicating a webpage from a screenshot/image. Analyze the image carefully and recreate it with extreme fidelity.
 ${brandSection}${pixelSection}${extraSection}
 ${stackInstructions}
+${stackQuality}
 
 === CRITICAL REQUIREMENTS ===
 
@@ -328,85 +332,249 @@ function getStackInstructions(stack: ExportFormat): string {
   switch (stack) {
     case "react-tailwind":
       return `=== TECH STACK: React + Tailwind CSS ===
-Generate a SINGLE React functional component using TypeScript (.tsx).
-- Use Tailwind CSS utility classes INLINE in JSX — no separate CSS files
-- The component should be self-contained and renderable
-- Use proper TypeScript interfaces for props
-- Export as default function component
-- Use semantic HTML elements within JSX
-- All styling via Tailwind className — minimize inline styles
-- Use className template literals for conditional classes
 
-CRITICAL - The "html" field format:
-The "html" field MUST contain ONLY the JSX markup body (the content inside the return parentheses).
-Do NOT include: import statements, const declarations, function definitions, the return keyword, or closing braces.
+Generate a production-grade React component in TypeScript (.tsx) with Tailwind CSS v4.
+
+COMPONENT STRUCTURE:
+- Single self-contained functional component
+- TypeScript interfaces for all props
+- Export as default function component
+- Use semantic HTML5 elements within JSX: <header>, <nav>, <main>, <section>, <article>, <aside>, <footer>
+- Proper heading hierarchy: <h1> → <h2> → <h3> (no skipping)
+
+TAILWIND CSS PATTERNS:
+- All styling via Tailwind utility classes in className — NO separate CSS files, NO inline style objects
+- Use className template literals for conditional classes: \`\${active ? 'bg-blue-600' : 'bg-gray-200'}\`
+- Prefer standard utilities: flex, grid, gap-*, p-*, m-*, w-*, h-*, text-*, bg-*, rounded-*, shadow-*
+- Use arbitrary values ONLY when no standard class exists: text-[13px], bg-[#1a2b3c], top-[72px]
+- Color matching: use bg-[#hex], text-[#hex], border-[#hex] for exact colors from the analysis
+- Spacing: prefer Tailwind scale (p-1=4, p-2=8, p-3=12, p-4=16, p-6=24, p-8=32, p-12=48)
+- Responsive: use sm:, md:, lg:, xl: prefixes, mobile-first approach
+- Hover/focus/active states: hover:bg-*, focus:ring-*, active:scale-*
+- Transitions: transition-all, duration-200, ease-in-out for smooth interactions
+
+RESPONSIVE LAYOUT:
+- Mobile-first: base styles = mobile, add breakpoints upward
+- Use flex-col on mobile, flex-row on larger screens where appropriate
+- Use grid-cols-1 on mobile, grid-cols-2/3/4 on larger screens
+- Container: w-full max-w-{size} mx-auto px-4 sm:px-6 lg:px-8
+- Ensure no horizontal overflow at ANY viewport width
+
+INTERACTIVE ELEMENTS:
+- Buttons: <button> with hover/focus/disabled states, proper cursor-pointer
+- Links: <a> with href="#", hover:underline, focus:outline-none focus:ring-2
+- Forms: <input>, <textarea>, <select> with <label>, placeholder, required attributes
+- Navigation: active state indicator (e.g., border-b-2 or font-bold)
+
+ACCESSIBILITY (WCAG AA):
+- All images: descriptive alt text, or alt="" for decorative
+- All icons: aria-label or sr-only text
+- Color contrast: ensure text is readable on its background
+- Keyboard navigation: focus:ring-2 focus:ring-offset-2 on interactive elements
+- ARIA attributes: aria-label, aria-expanded, aria-hidden where appropriate
+- Form labels: <label htmlFor="id"> or aria-label on inputs
+
+VISUAL POLISH:
+- Consistent border-radius: pick one (rounded-lg or rounded-xl) and use throughout
+- Consistent shadows: shadow-sm for subtle, shadow-md for cards, shadow-lg for modals
+- Consistent spacing rhythm: use 4px or 8px grid alignment
+- Proper text hierarchy: text-4xl/text-3xl for h1, text-2xl/text-xl for h2, text-lg for h3
+- Line heights: leading-tight for headings, leading-relaxed for body text
+
+CRITICAL OUTPUT RULES:
+The "html" field MUST contain ONLY the JSX markup body (the content inside return parentheses).
+Do NOT include: import statements, const declarations, function definitions, the return keyword, closing braces.
 Correct: <div className="flex items-center"><h1 className="text-2xl">Hello</h1></div>
 Wrong: import React from 'react'; const App = () => { return (<div>...</div>) }
-
-Output the "html" field as ONLY the JSX return body - pure markup, nothing else.
-Output the "css" field as any @tailwind directives or custom CSS needed.`;
-
-    case "react":
-      return `=== TECH STACK: React ===
-Generate a React functional component with TypeScript.
-- Use className for JSX attributes (not class)
-- Use htmlFor (not for)
-- Self-closing tags for void elements (<img />, <input />, <br />)
-- Proper TypeScript interfaces for props
-- Export as default function component
-- CSS in a separate constant or imported file
-
-CRITICAL - The "html" field MUST contain ONLY the JSX markup body (inside return parentheses).
-Do NOT include import statements, const declarations, function definitions, or return keyword.
-
-Output the "html" field as ONLY the JSX return body - pure markup, nothing else.
-Output the "css" field as the component's CSS.`;
-
-    case "nextjs":
-      return `=== TECH STACK: Next.js (App Router) ===
-Generate a Next.js App Router page component.
-- Use 'use client' directive if client-side interactivity is needed
-- Use proper Metadata exports for SEO
-- Use Next.js Image component for images where appropriate
-- Use Tailwind CSS for all styling
-- Proper TypeScript types
-- Use Link component for navigation
-
-CRITICAL - The "html" field MUST contain ONLY the JSX markup body (inside return parentheses).
-Do NOT include import statements, function definitions, the return keyword, or closing braces.
-
-Output the "html" field as ONLY the JSX return body - pure markup, nothing else.
-Output the "css" field as any module CSS or Tailwind config needed.`;
+Output the "css" field as any custom CSS beyond Tailwind utilities (prefer empty).`;
 
     case "vue":
-      return `=== TECH STACK: Vue 3 (Composition API) ===
-Generate a Vue 3 Single File Component (.vue) with <script setup lang="ts">.
-- Use Composition API with TypeScript
-- Use Tailwind CSS for all styling
-- Proper component name via defineOptions
-- Reactive data with ref() and reactive()
-- Template with proper Vue directives (v-if, v-for, v-bind, v-on)
+      return `=== TECH STACK: Vue 3 (Composition API + Tailwind CSS) ===
 
-Output the "html" field as the <template> content.
-Output the "css" field as <style scoped> content.`;
+Generate a production-grade Vue 3 Single File Component (.vue) using Composition API with TypeScript.
+
+COMPONENT STRUCTURE:
+- Single File Component with <script setup lang="ts">
+- Define component name via defineOptions({ name: 'ComponentName' })
+- Declare props with defineProps<{ ... }>()
+- Use Tailwind CSS for ALL styling via class attributes
+
+VUE 3 PATTERNS:
+- Reactive state: const count = ref(0) / const state = reactive({ ... })
+- Computed: const doubled = computed(() => count.value * 2)
+- Lifecycle: onMounted(), onUnmounted()
+- Watch: watch(source, callback)
+- Methods: plain functions in <script setup>
+
+TEMPLATE SYNTAX:
+- Conditional rendering: v-if / v-else-if / v-else
+- List rendering: v-for="(item, index) in items" :key="item.id"
+- Attribute binding: :href="url", :class="{ active: isActive }"
+- Event handling: @click="handleClick", @submit.prevent="onSubmit"
+- Two-way binding: v-model="inputValue"
+- Dynamic classes: :class="['base-class', isActive ? 'active' : '']"
+- Dynamic styles: :style="{ color: textColor }"
+- Slots: <slot />, <slot name="header" />
+
+TAILWIND CSS PATTERNS:
+- All styling via Tailwind utility classes in the template
+- Color matching: use bg-[#hex], text-[#hex], border-[#hex] for exact colors
+- Spacing: prefer Tailwind scale (p-1=4, p-2=8, p-3=12, p-4=16, p-6=24, p-8=32)
+- Use arbitrary values ONLY when needed: text-[13px], bg-[#1a2b3c]
+- Responsive: sm:, md:, lg:, xl: prefixes, mobile-first approach
+- Hover/focus/active: hover:bg-*, focus:ring-*, active:scale-*
+- Transitions: transition-all, duration-200 for smooth interactions
+
+RESPONSIVE LAYOUT:
+- Mobile-first: base styles = mobile, add breakpoints upward
+- Use flex-col on mobile, flex-row on sm: and above where appropriate
+- Use grid-cols-1 on mobile, grid-cols-2/3/4 on larger screens
+- Container: w-full max-w-{size} mx-auto px-4 sm:px-6 lg:px-8
+- Ensure no horizontal overflow at ANY viewport width
+
+INTERACTIVE ELEMENTS:
+- Buttons: <button @click> with hover/focus/disabled states
+- Links: <a :href="#" @click.prevent>, hover:underline
+- Forms: <input v-model> / <textarea v-model> with <label for>
+- Navigation: active state indicator with :class binding
+
+ACCESSIBILITY (WCAG AA):
+- All images: descriptive alt text, or alt="" for decorative
+- All icons: aria-label or sr-only text
+- Color contrast: ensure text is readable on its background
+- Keyboard navigation: focus:ring-2 focus:ring-offset-2 on interactive elements
+- ARIA attributes: aria-label, aria-expanded, aria-hidden where appropriate
+- Form labels: <label for="id"> or aria-label on inputs
+
+VISUAL POLISH:
+- Consistent border-radius throughout the component
+- Consistent shadows: shadow-sm for subtle, shadow-md for cards, shadow-lg for modals
+- Consistent spacing rhythm: 4px or 8px grid alignment
+- Proper text hierarchy: text-4xl/text-3xl for h1, text-2xl/text-xl for h2, text-lg for h3
+- Line heights: leading-tight for headings, leading-relaxed for body text
+
+CRITICAL OUTPUT RULES:
+The "html" field MUST contain the <template> content ONLY.
+Do NOT include <script setup>, <style>, or <template> tags in the html field.
+The "css" field should contain any additional scoped CSS (prefer empty — use Tailwind classes).`;
 
     case "html":
     default:
       return `=== TECH STACK: HTML + Tailwind CSS ===
-Generate a single self-contained HTML file.
+
+Generate a single self-contained HTML page with Tailwind CSS v4.
 - Use Tailwind CSS utility classes for all styling
 - DO NOT include any <script> tags — the rendering environment provides Tailwind processing
 - DO NOT include Tailwind CDN <script> or <link> tags
-- Semantic HTML5 structure
+- Semantic HTML5 structure: header, nav, main, section, article, footer
+- Proper heading hierarchy: h1 → h2 → h3 (no skipping)
 - Use Lucide icon names in aria-label for icon placeholders
 - All custom CSS must use standard CSS (no @apply, no @tailwind directives)
+- Responsive: use Tailwind responsive prefixes, mobile-first approach
+- Accessibility: alt text, ARIA attributes, keyboard navigation, color contrast (WCAG AA)
 
 Output the "html" field as the <body> content only — no <head>, no <script> tags.
 Output the "css" field as any additional custom CSS (pure CSS only, no Tailwind directives).`;
   }
 }
 
+/**
+ * Stack-specific quality requirements injected into generation prompts.
+ * Supplements the generic requirements with framework-aware guidance.
+ */
+function getStackSpecificQualityRequirements(stack: ExportFormat): string {
+  switch (stack) {
+    case "react-tailwind":
+      return `
+=== REACT + TAILWIND QUALITY REQUIREMENTS ===
+- JSX attributes: className (not class), htmlFor (not for), tabIndex (not tabindex)
+- Self-closing void elements: <img />, <input />, <br />, <hr />
+- Boolean attributes: <input disabled /> (not disabled="true")
+- Event handlers: onClick, onChange, onSubmit (camelCase)
+- Conditional rendering: {condition && <Element />} or ternary expressions
+- List rendering: {items.map(item => <Element key={item.id} />)}
+- Template literals for dynamic classes: \`\${base} \${condition ? active : inactive}\`
+- Do NOT use class=, for=, onclick= — these are HTML, not JSX`;
+
+    case "vue":
+      return `
+=== VUE 3 QUALITY REQUIREMENTS ===
+- Template uses standard HTML attributes: class (not className), for (not htmlFor)
+- Event handling: @click, @input, @submit.prevent (shorthand v-on:)
+- Attribute binding: :href, :class, :style (shorthand v-bind:)
+- Conditional: v-if / v-else-if / v-else (NOT ternary in template)
+- Lists: v-for="(item, index) in items" :key="item.id"
+- Two-way binding: v-model="value" for form inputs
+- Dynamic classes: :class="['base', { 'active': isActive }]"
+- Slots: <slot /> for default content, <slot name="header" /> for named slots
+- Do NOT use className, onClick, htmlFor — these are JSX, not Vue`;
+
+    case "html":
+    default:
+      return "";
+  }
+}
+
 // ─── Style Template prompt ───────────────────────────────────────────────────
+
+/**
+ * Stack-specific template output instructions.
+ * Tells the AI exactly WHERE to put CSS custom properties and what format
+ * each output field should have, per tech stack.
+ */
+function getTemplateStackOutputInstructions(stack: ExportFormat): string {
+  switch (stack) {
+    case "react-tailwind":
+      return `=== OUTPUT FORMAT FOR REACT + TAILWIND ===
+
+The "css" field MUST contain ALL design tokens as CSS custom properties in a :root {} block:
+:root {
+  /* Colors */
+  --color-primary: #hex;
+  --color-secondary: #hex;
+  /* ... */
+}
+
+The "html" field MUST contain ONLY the JSX markup body (content inside return parentheses).
+Do NOT include: import statements, const declarations, function definitions, the return keyword, or closing braces.
+Do NOT include any <style> tags in the html field — all CSS goes in the css field.
+Use Tailwind arbitrary values to reference tokens: bg-[var(--color-primary)], text-[var(--color-text)].
+Use className (not class) for JSX attributes.`;
+
+    case "vue":
+      return `=== OUTPUT FORMAT FOR VUE 3 ===
+
+The "html" field MUST contain the <template> content ONLY (the markup inside <template>...</template>).
+Do NOT include <script setup>, <style>, or <template> tags in the html field.
+Use proper Vue directives: v-if, v-for, v-bind, v-on.
+Use :style bindings or CSS classes to reference design tokens.
+
+The "css" field MUST contain the content for <style scoped>, including ALL design tokens as CSS custom properties:
+:root {
+  --color-primary: #hex;
+  /* ... */
+}
+
+Do NOT include <style scoped> tags — just the CSS rules.`;
+
+    case "html":
+    default:
+      return `=== OUTPUT FORMAT FOR HTML ===
+
+The "html" field MUST contain the full page template with a <style> tag at the top containing ALL CSS custom properties:
+<style>
+  :root {
+    --color-primary: #hex;
+    /* ... */
+  }
+  /* component styles */
+</style>
+<!-- Page content -->
+<div>...</div>
+
+The "css" field should be EMPTY — all CSS goes inside the <style> tag in the html field.`;
+  }
+}
 
 /**
  * Build a prompt for generating a reusable style template from an image.
@@ -422,6 +590,8 @@ Output the "css" field as any additional custom CSS (pure CSS only, no Tailwind 
  * - Uses placeholder/dummy text content instead of extracting exact text
  * - Generates reusable component patterns (cards, buttons, navbars, sections)
  * - Output is a template users can customize by editing CSS variables
+ *
+ * Supported stacks: html, react-tailwind, vue
  */
 export function buildStyleTemplatePrompt(
   stack: ExportFormat,
@@ -436,6 +606,7 @@ export function buildStyleTemplatePrompt(
     ? `\n=== ADDITIONAL CONTEXT ===\n${extraContext}\n=== END ADDITIONAL CONTEXT ===\n`
     : "";
   const stackInstructions = getStackInstructions(stack);
+  const templateOutputInstructions = getTemplateStackOutputInstructions(stack);
 
   return `You are creating a REUSABLE STYLE TEMPLATE from a webpage screenshot.
 Your goal is to extract the DESIGN LANGUAGE (colors, typography, spacing, layout patterns,
@@ -450,7 +621,7 @@ ${stackInstructions}
 === CRITICAL REQUIREMENTS ===
 
 1. CSS CUSTOM PROPERTIES (DESIGN TOKENS):
-   - Define ALL colors as CSS custom properties in a :root {} block or Tailwind theme config
+   - Define ALL colors as CSS custom properties in a :root {} block
    - Example: --color-primary: #4F46E5; --color-bg: #ffffff; --color-text: #111827;
    - Define spacing scale: --space-xs: 4px; --space-sm: 8px; --space-md: 16px; --space-lg: 24px; --space-xl: 32px; --space-2xl: 48px;
    - Define typography: --font-heading: 'Inter', sans-serif; --font-body: 'Inter', sans-serif;
@@ -458,6 +629,7 @@ ${stackInstructions}
    - Define border radius: --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px;
    - Define shadows: --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
    - Use these tokens EVERYWHERE in the generated code
+   - Group tokens logically with CSS comments (/* Colors */, /* Typography */, /* Spacing */)
 
 2. NO IMAGE EMBEDDING:
    - Do NOT use <img> tags for images from the original screenshot
@@ -483,34 +655,31 @@ ${stackInstructions}
 
 5. LAYOUT STRUCTURE:
    - Create a well-organized page layout with clear section boundaries
-   - Use semantic HTML: <header>, <nav>, <main>, <section>, <footer>
+   - Use semantic HTML elements: header, nav, main, section, article, footer
    - Each section should be a self-contained block
-   - Add HTML comments to mark each section: <!-- Navigation -->, <!-- Hero Section -->, etc.
+   - Add comments to mark each section (HTML comments for HTML/Vue, JSX comments for React)
 
 6. EDITABILITY:
-   - The CSS should be at the TOP of the output, inside a <style> tag
-   - Users should be able to change a CSS variable and see the entire page update
+   - Users should be able to change a CSS custom property and see the entire template update
    - Group CSS custom properties logically (colors, typography, spacing, effects)
    - Add comments explaining each group of tokens
 
 7. RESPONSIVE:
-   - Use responsive design with Tailwind breakpoints or CSS media queries
+   - Use responsive design with breakpoints
    - Mobile-first approach
 
-=== OUTPUT FORMAT ===
+${templateOutputInstructions}
+
+=== JSON OUTPUT FORMAT ===
 
 Reply with ONLY a single valid JSON object. No markdown fences. No prose.
 
-The "html" field should contain the full page template with <style> at the top.
-The "css" field should be EMPTY — all CSS goes inside the <style> tag in html.
-The "designTokens" field should list all extracted design tokens grouped by category.
-
 {
-  "html": "string — complete template with <style> tag containing CSS custom properties, followed by HTML body",
-  "css": "",
+  "html": "string — template markup in the format specified above",
+  "css": "string — CSS custom properties and styles in the format specified above",
   "explanation": "string — description of the extracted design language and how to customize the template",
   "designTokens": {
-    "colors": { "primary": "#hex", "secondary": "#hex", "background": "#hex", "text": "#hex", ... },
+    "colors": { "primary": "#hex", "secondary": "#hex", "background": "#hex", "text": "#hex" },
     "typography": { "headingFont": "string", "bodyFont": "string", "baseFontSize": "string" },
     "spacing": { "unit": "string", "scale": ["string"] },
     "effects": { "borderRadius": "string", "shadowStyle": "string" }
@@ -532,6 +701,8 @@ export function buildRefinementPrompt(
   currentCss: string,
   originalDescription?: string,
 ): string {
+  const stackQuality = getStackSpecificQualityRequirements(stack);
+
   return `You are refining a previously generated webpage to achieve pixel-perfect quality.
 ${originalDescription ? `\nOriginal page description:\n${originalDescription}\n` : ""}
 Current code:
@@ -570,6 +741,13 @@ CSS: ${currentCss}
    - Shadow depth consistency
    - Transition/animation smoothness
    - Image aspect ratios
+
+7. ACCESSIBILITY:
+   - All images have descriptive alt text
+   - All interactive elements are keyboard-accessible
+   - Form inputs have associated labels
+   - ARIA attributes are correct and complete
+${stackQuality}
 
 === OUTPUT FORMAT ===
 

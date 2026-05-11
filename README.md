@@ -21,7 +21,140 @@ Supports brand kit customization, SEO generation, accessibility checking, compon
 - **Chat Refinement** — Adjust layout and style in real time through conversational AI
 - **Batch Processing** — Upload multiple screenshots at once and replicate layouts in bulk
 - **Device Preview** — Switch between desktop, tablet, and mobile views
-- **Multi-format Export** — Export as HTML, React, Vue, or Next.js code
+- **Multi-format Export** — Export as HTML + Tailwind, React + Tailwind, or Vue 3 code
+- **Style Template Mode** — Extract design language from images, generate editable templates with CSS custom properties
+
+---
+
+## Feature Architecture
+
+```
+Input Layer                 Processing Layer               Output Layer
+┌─────────────────┐     ┌──────────────────────┐    ┌─────────────────┐
+│ 📷 Image Upload  │     │ Multi-Pass Pipeline   │    │ 💻 Code Editor   │
+│ 🌐 URL Fetch     │ ──→ │  Pass 1: Analysis     │ ──→ │ 👁️ Live Preview  │
+│ 📦 Batch Upload  │     │  Pass 2: Generation   │    │ 📥 Multi-format   │
+│                 │     │  Pass 3: Refinement   │    │ 💾 Project Save   │
+└─────────────────┘     └──────────────────────┘    └─────────────────┘
+                              │
+                    ┌─────────┼─────────┐
+                    ▼         ▼         ▼
+              Pixel Layout  Scene     Design
+              Analysis      Classify  Template
+```
+
+## Feature List
+
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Feature</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="6"><strong>Core Pipeline</strong></td>
+      <td>Multi-Pass Vision Pipeline</td>
+      <td>Analyze → Generate → Refine three-stage pipeline for significantly improved accuracy</td>
+    </tr>
+    <tr>
+      <td>URL → Code</td>
+      <td>Server-side Playwright screenshot + skeleton extraction, vision model replication</td>
+    </tr>
+    <tr>
+      <td>Pixel Layout Analysis</td>
+      <td>Canvas pixel sampling: color bands, column structure, content density, brightness</td>
+    </tr>
+    <tr>
+      <td>Scene Classification</td>
+      <td>AI classifies images: portrait / scenery / animal / object / abstract</td>
+    </tr>
+    <tr>
+      <td>Style Template Mode</td>
+      <td>Extract design language, generate CSS custom properties + {{variable}} placeholders, no image embedding</td>
+    </tr>
+    <tr>
+      <td>Chart Detection & Recreation</td>
+      <td>Detect bar/line/pie/area charts in screenshots, recreate as interactive Recharts components</td>
+    </tr>
+    <tr>
+      <td rowspan="2"><strong>Tech Stack</strong></td>
+      <td>3 Output Formats</td>
+      <td>HTML + Tailwind, React + Tailwind, Vue 3</td>
+    </tr>
+    <tr>
+      <td>Multi-Provider AI</td>
+      <td>OpenAI / Anthropic / DeepSeek / Qwen / Groq / Zhipu / Google / Xiaomi MiMo</td>
+    </tr>
+    <tr>
+      <td rowspan="6"><strong>Editing</strong></td>
+      <td>Monaco Code Editor</td>
+      <td>Dual-tab HTML / CSS editing with syntax highlighting</td>
+    </tr>
+    <tr>
+      <td>Brand Kit</td>
+      <td>Colors / fonts / border-radius / logo / company info, injected as CSS variables</td>
+    </tr>
+    <tr>
+      <td>Template Variables</td>
+      <td>AI detects editable text, {{variable}} form-based editing</td>
+    </tr>
+    <tr>
+      <td>AI Chat Refinement</td>
+      <td>Conversational iterative code modification with instruction-based optimization</td>
+    </tr>
+    <tr>
+      <td>Image Editor</td>
+      <td>Crop / replace detected image assets</td>
+    </tr>
+    <tr>
+      <td>Asset Management</td>
+      <td>Detect → crop → replace → upload images, with manual addition support</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><strong>Quality Analysis</strong></td>
+      <td>Accessibility Checker</td>
+      <td>11 rules (img-alt, heading-order, color-contrast, etc.), scored 0–100</td>
+    </tr>
+    <tr>
+      <td>SEO Panel</td>
+      <td>AI-generated meta / Open Graph / Twitter Card tags, fully editable</td>
+    </tr>
+    <tr>
+      <td>Device Preview</td>
+      <td>Mobile / Tablet / Desktop / Wide switching, auto-resizing iframe height</td>
+    </tr>
+    <tr>
+      <td rowspan="6"><strong>Infrastructure</strong></td>
+      <td>SSRF Protection</td>
+      <td>URL safety validation with allowlisted domains</td>
+    </tr>
+    <tr>
+      <td>Response Caching</td>
+      <td>Server-side AI response cache for 30 minutes (max 50 entries)</td>
+    </tr>
+    <tr>
+      <td>Rate Limiting</td>
+      <td>20 requests per 60 seconds per IP</td>
+    </tr>
+    <tr>
+      <td>Batch Processing</td>
+      <td>Parallel multi-image generation</td>
+    </tr>
+    <tr>
+      <td>Project Management</td>
+      <td>localStorage-based project history save/load</td>
+    </tr>
+    <tr>
+      <td>Internationalization</td>
+      <td>English / Chinese language switching</td>
+    </tr>
+  </tbody>
+</table>
+
+---
 
 ## Supported AI Providers
 

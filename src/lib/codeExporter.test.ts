@@ -31,40 +31,6 @@ describe("codeExporter utility functions", () => {
     });
   });
 
-  describe("React export", () => {
-    it("should generate valid React component", () => {
-      const result = exportCode("react", testHtml, testCss);
-      expect(result.format).toBe("react");
-      expect(result.filename).toBe("Mylayout.tsx");
-      expect(result.language).toBe("tsx");
-      expect(result.content).toContain("import React from 'react';");
-      expect(result.content).toContain("export function Mylayout");
-      expect(result.content).toContain("return (");
-      expect(result.content).toContain("<>");
-      expect(result.content).toContain("</>");
-    });
-
-    it("should convert HTML to JSX", () => {
-      const htmlWithAttributes =
-        '<div class="foo" onclick="alert()"><img src="test.jpg"></div>';
-      const result = exportCode("react", htmlWithAttributes, "");
-      expect(result.content).toContain("className=");
-      expect(result.content).toContain("onClick=");
-      expect(result.content).toContain('<img src="test.jpg" />');
-    });
-
-    it("should include CSS as template literal", () => {
-      const result = exportCode("react", testHtml, testCss);
-      expect(result.content).toContain("const styles = `");
-      expect(result.content).toContain(testCss);
-    });
-
-    it("should skip CSS section if empty", () => {
-      const result = exportCode("react", testHtml, "");
-      expect(result.content).not.toContain("const styles");
-    });
-  });
-
   describe("Vue export", () => {
     it("should generate valid Vue SFC", () => {
       const result = exportCode("vue", testHtml, testCss);
@@ -87,37 +53,6 @@ describe("codeExporter utility functions", () => {
     it("should skip style section if no CSS", () => {
       const result = exportCode("vue", testHtml, "");
       expect(result.content).not.toContain("<style scoped>");
-    });
-  });
-
-  describe("Next.js export", () => {
-    it("should generate valid Next.js page", () => {
-      const result = exportCode("nextjs", testHtml, testCss);
-      expect(result.format).toBe("nextjs");
-      expect(result.filename).toBe("mylayout/page.tsx");
-      expect(result.language).toBe("tsx");
-      expect(result.content).toContain("import type { Metadata } from 'next';");
-      expect(result.content).toContain("export const metadata: Metadata");
-      expect(result.content).toContain("export default function MylayoutPage");
-      expect(result.content).toContain("return (");
-    });
-
-    it("should include CSS module import", () => {
-      const result = exportCode("nextjs", testHtml, testCss);
-      expect(result.content).toContain(
-        "import styles from './mylayout.module.css'",
-      );
-      expect(result.content).toContain("/* mylayout.module.css */");
-      expect(result.content).toContain(testCss);
-    });
-
-    it("should use custom page name", () => {
-      const result = exportCode("nextjs", testHtml, testCss, "About");
-      expect(result.filename).toBe("about/page.tsx");
-      expect(result.content).toContain("export default function AboutPage");
-      expect(result.content).toContain(
-        "import styles from './about.module.css'",
-      );
     });
   });
 

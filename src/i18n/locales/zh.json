@@ -30,8 +30,6 @@
   "stack": {
     "reactTailwind": "React + Tailwind",
     "html": "HTML + Tailwind",
-    "react": "React",
-    "nextjs": "Next.js",
     "vue": "Vue 3"
   },
   "actions": {

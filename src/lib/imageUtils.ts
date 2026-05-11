@@ -11,7 +11,7 @@ import type { ExportFormat } from "./types";
 /**
  * Normalize AI-generated HTML for iframe preview.
  *
- * Problem: When using React/Next.js/Vue stacks, the AI often generates
+ * Problem: When using React+Tailwind/Vue stacks, the AI often generates
  * full component code (import statements, const declarations, return keywords)
  * instead of just the markup. The preview iframe is plain HTML and cannot
  * execute JSX or JavaScript module syntax.
@@ -40,8 +40,7 @@ export function normalizeHtmlForPreview(
   }
 
   // Only apply JSX normalization for React-based stacks
-  const isReactStack =
-    stack === "react" || stack === "react-tailwind" || stack === "nextjs";
+  const isReactStack = stack === "react-tailwind";
 
   if (isReactStack) {
     // Step 1: If the AI returned a full React component, extract the JSX body

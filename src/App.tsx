@@ -377,8 +377,6 @@ function App() {
                       icon: "⚛️",
                     },
                     { key: "html", label: "HTML + Tailwind", icon: "🌐" },
-                    { key: "react", label: "React", icon: "⚛️" },
-                    { key: "nextjs", label: "Next.js", icon: "▲" },
                     { key: "vue", label: "Vue 3", icon: "💚" },
                   ] as const
                 ).map((s) => (

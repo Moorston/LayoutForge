@@ -41,22 +41,10 @@ describe("prompts module", () => {
       expect(prompt).toContain("TypeScript");
     });
 
-    it("should generate a prompt for nextjs stack", () => {
-      const prompt = buildGenerationPrompt("nextjs");
-      expect(prompt).toContain("Next.js");
-      expect(prompt).toContain("App Router");
-    });
-
     it("should generate a prompt for vue stack", () => {
       const prompt = buildGenerationPrompt("vue");
       expect(prompt).toContain("Vue 3");
       expect(prompt).toContain("Composition API");
-    });
-
-    it("should generate a prompt for react stack", () => {
-      const prompt = buildGenerationPrompt("react");
-      expect(prompt).toContain("React");
-      expect(prompt).toContain("className");
     });
 
     it("should include brand kit context when provided", () => {
@@ -66,13 +54,22 @@ describe("prompts module", () => {
     });
 
     it("should include pixel layout context when provided", () => {
-      const prompt = buildGenerationPrompt("html", undefined, "Grid: 3 columns");
+      const prompt = buildGenerationPrompt(
+        "html",
+        undefined,
+        "Grid: 3 columns",
+      );
       expect(prompt).toContain("PIXEL LAYOUT ANALYSIS");
       expect(prompt).toContain("3 columns");
     });
 
     it("should include extra context when provided", () => {
-      const prompt = buildGenerationPrompt("html", undefined, undefined, "Dark theme");
+      const prompt = buildGenerationPrompt(
+        "html",
+        undefined,
+        undefined,
+        "Dark theme",
+      );
       expect(prompt).toContain("ADDITIONAL CONTEXT");
       expect(prompt).toContain("Dark theme");
     });
@@ -98,7 +95,11 @@ describe("prompts module", () => {
 
   describe("buildRefinementPrompt", () => {
     it("should include current HTML and CSS", () => {
-      const prompt = buildRefinementPrompt("html", "<div>test</div>", ".test { color: red }");
+      const prompt = buildRefinementPrompt(
+        "html",
+        "<div>test</div>",
+        ".test { color: red }",
+      );
       expect(prompt).toContain("<div>test</div>");
       expect(prompt).toContain(".test { color: red }");
     });
@@ -113,7 +114,12 @@ describe("prompts module", () => {
     });
 
     it("should include original description when provided", () => {
-      const prompt = buildRefinementPrompt("html", "<div/>", "", "A landing page");
+      const prompt = buildRefinementPrompt(
+        "html",
+        "<div/>",
+        "",
+        "A landing page",
+      );
       expect(prompt).toContain("A landing page");
     });
 
@@ -133,7 +139,11 @@ describe("prompts module", () => {
     });
 
     it("should include brand kit when provided", () => {
-      const prompt = buildSkeletonPrompt("html", "skeleton", "Brand: Acme Corp");
+      const prompt = buildSkeletonPrompt(
+        "html",
+        "skeleton",
+        "Brand: Acme Corp",
+      );
       expect(prompt).toContain("BRAND KIT");
       expect(prompt).toContain("Acme Corp");
     });
@@ -157,8 +167,8 @@ describe("prompts module", () => {
     });
 
     it("should include stack-specific instructions", () => {
-      const prompt = buildTextPrompt("nextjs", "content");
-      expect(prompt).toContain("Next.js");
+      const prompt = buildTextPrompt("vue", "content");
+      expect(prompt).toContain("Vue 3");
     });
   });
 });
