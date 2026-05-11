@@ -6,8 +6,21 @@ import { defineConfig, loadEnv } from "vite";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, ".", "");
 
-  /** Helper: read from vite env first, then process.env, fallback to empty string. */
-  const e = (key: string) => JSON.stringify(env[key] ?? process.env[key] ?? "");
+  /**
+   * Helper: read from vite env first, then process.env, fallback to empty string.
+   * BLOCKS any variable containing sensitive keywords to prevent accidental
+   * leakage of API keys into the frontend bundle.
+   */
+  const SENSITIVE_RE = /(?:API_KEY|SECRET|TOKEN|PASSWORD|PRIVATE)/i;
+  const e = (key: string) => {
+    if (SENSITIVE_RE.test(key)) {
+      throw new Error(
+        `[vite.config] Refusing to inject sensitive variable "${key}" into frontend bundle. ` +
+          `Move it to server-side code instead.`,
+      );
+    }
+    return JSON.stringify(env[key] ?? process.env[key] ?? "");
+  };
 
   return {
     plugins: [react(), tailwindcss()],

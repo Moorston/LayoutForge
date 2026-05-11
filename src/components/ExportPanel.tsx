@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import { Download, Copy, Check, Code2, Eye, EyeOff } from 'lucide-react';
-import { motion } from 'motion/react';
-import Editor from '@monaco-editor/react';
-import { exportCode, downloadExportResult, FORMAT_META } from '@/lib/codeExporter';
-import type { ExportFormat, ExportResult } from '@/lib/types';
-import { cn } from '@/lib/utils';
+import React, { useState } from "react";
+import { Download, Copy, Check, Code2, Eye, EyeOff } from "lucide-react";
+import { motion } from "motion/react";
+import Editor from "@monaco-editor/react";
+import {
+  exportCode,
+  downloadExportResult,
+  FORMAT_META,
+} from "@/lib/codeExporter";
+import type { ExportFormat, ExportResult } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 interface ExportPanelProps {
   html: string;
@@ -13,24 +17,28 @@ interface ExportPanelProps {
 }
 
 const INSTALL_NOTES: Record<ExportFormat, string> = {
-  html: 'Open directly in any browser. Tailwind CSS is loaded via CDN — zero build step required.',
-  react: 'Install: npm install react react-dom && npm install -D typescript @types/react @types/react-dom vite @vitejs/plugin-react',
-  vue: 'Use with Vite + plugin-vue: npm create vite@latest my-app -- --template vue-ts, then copy this SFC.',
-  nextjs: 'Run: npx create-next-app@latest. Place this file under /app/[route]/page.tsx in the App Router.',
+  html: "Open directly in any browser. Tailwind CSS is loaded via CDN — zero build step required.",
+  react:
+    "Install: npm install react react-dom && npm install -D typescript @types/react @types/react-dom vite @vitejs/plugin-react",
+  vue: "Use with Vite + plugin-vue: npm create vite@latest my-app -- --template vue-ts, then copy this SFC.",
+  nextjs:
+    "Run: npx create-next-app@latest. Place this file under /app/[route]/page.tsx in the App Router.",
 };
 
 const ACCENT_BORDER: Record<ExportFormat, string> = {
-  html: 'border-l-orange-400',
-  react: 'border-l-blue-400',
-  vue: 'border-l-emerald-400',
-  nextjs: 'border-l-slate-900',
+  html: "border-l-orange-400",
+  react: "border-l-blue-400",
+  vue: "border-l-emerald-400",
+  nextjs: "border-l-slate-900",
 };
 
-const FORMATS: ExportFormat[] = ['html', 'react', 'vue', 'nextjs'];
+const FORMATS: ExportFormat[] = ["html", "react", "vue", "nextjs"];
 
 export function ExportPanel({ html, css, projectName }: ExportPanelProps) {
-  const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('html');
-  const [componentName, setComponentName] = useState<string>(projectName ?? 'MyLayout');
+  const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("html");
+  const [componentName, setComponentName] = useState<string>(
+    projectName ?? "MyLayout",
+  );
   const [copied, setCopied] = useState<boolean>(false);
   const [showPreview, setShowPreview] = useState<boolean>(true);
   const [result, setResult] = useState<ExportResult | null>(null);
@@ -47,16 +55,31 @@ export function ExportPanel({ html, css, projectName }: ExportPanelProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // fallback
+      // Fallback for environments where clipboard API is unavailable
+      const textArea = document.createElement("textarea");
+      textArea.value = result.content;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch {
+        alert("Failed to copy to clipboard. Please copy manually.");
+      } finally {
+        document.body.removeChild(textArea);
+      }
     }
   };
 
   const editorLanguage =
-    result?.language === 'tsx' || result?.language === 'ts'
-      ? 'typescript'
-      : result?.language === 'vue'
-      ? 'html'
-      : (result?.language ?? 'html');
+    result?.language === "tsx" || result?.language === "ts"
+      ? "typescript"
+      : result?.language === "vue"
+        ? "html"
+        : (result?.language ?? "html");
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 flex flex-col gap-6">
@@ -87,15 +110,22 @@ export function ExportPanel({ html, css, projectName }: ExportPanelProps) {
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setSelectedFormat(fmt)}
                 className={cn(
-                  'relative flex flex-col items-start gap-1 rounded-xl border-2 border-l-4 p-4 text-left transition-all duration-200',
+                  "relative flex flex-col items-start gap-1 rounded-xl border-2 border-l-4 p-4 text-left transition-all duration-200",
                   isSelected
-                    ? cn('ring-2 ring-slate-900 bg-slate-50', ACCENT_BORDER[fmt])
-                    : 'border-slate-200 border-l-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
+                    ? cn(
+                        "ring-2 ring-slate-900 bg-slate-50",
+                        ACCENT_BORDER[fmt],
+                      )
+                    : "border-slate-200 border-l-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60",
                 )}
               >
                 <span className="text-2xl leading-none">{meta.icon}</span>
-                <span className="text-sm font-bold text-slate-900 mt-1">{meta.label}</span>
-                <span className="text-[11px] text-slate-500 leading-snug">{meta.desc}</span>
+                <span className="text-sm font-bold text-slate-900 mt-1">
+                  {meta.label}
+                </span>
+                <span className="text-[11px] text-slate-500 leading-snug">
+                  {meta.desc}
+                </span>
                 {isSelected && (
                   <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-slate-900" />
                 )}
@@ -151,10 +181,15 @@ export function ExportPanel({ html, css, projectName }: ExportPanelProps) {
               onClick={() => setShowPreview((v) => !v)}
               className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors font-semibold"
             >
-              {showPreview
-                ? <><EyeOff className="w-3.5 h-3.5" /> Hide</>
-                : <><Eye className="w-3.5 h-3.5" /> Show</>
-              }
+              {showPreview ? (
+                <>
+                  <EyeOff className="w-3.5 h-3.5" /> Hide
+                </>
+              ) : (
+                <>
+                  <Eye className="w-3.5 h-3.5" /> Show
+                </>
+              )}
             </button>
           </div>
 
@@ -171,12 +206,12 @@ export function ExportPanel({ html, css, projectName }: ExportPanelProps) {
                   minimap: { enabled: false },
                   fontSize: 12,
                   lineHeight: 1.65,
-                  fontFamily: 'JetBrains Mono, Fira Code, Consolas, monospace',
-                  wordWrap: 'on',
+                  fontFamily: "JetBrains Mono, Fira Code, Consolas, monospace",
+                  wordWrap: "on",
                   scrollBeyondLastLine: false,
                   automaticLayout: true,
                   padding: { top: 12, bottom: 12 },
-                  scrollbar: { vertical: 'auto', horizontal: 'auto' },
+                  scrollbar: { vertical: "auto", horizontal: "auto" },
                 }}
               />
             </div>
@@ -205,16 +240,21 @@ export function ExportPanel({ html, css, projectName }: ExportPanelProps) {
               whileTap={{ scale: 0.97 }}
               onClick={handleCopy}
               className={cn(
-                'flex items-center justify-center gap-2 px-5 rounded-xl py-2.5 text-sm font-bold border transition-all duration-200',
+                "flex items-center justify-center gap-2 px-5 rounded-xl py-2.5 text-sm font-bold border transition-all duration-200",
                 copied
-                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                  : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:text-slate-900'
+                  ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                  : "bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:text-slate-900",
               )}
             >
-              {copied
-                ? <><Check className="w-4 h-4" /> Copied!</>
-                : <><Copy className="w-4 h-4" /> Copy</>
-              }
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4" /> Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" /> Copy
+                </>
+              )}
             </motion.button>
           </div>
 

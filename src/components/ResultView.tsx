@@ -63,9 +63,17 @@ import { DevicePreview } from "./DevicePreview";
 import { ExportPanel } from "./ExportPanel";
 import { AccessibilityPanel } from "./AccessibilityPanel";
 import { SEOPanel } from "./SEOPanel";
+import { ImageEditorOverlay } from "./ImageEditorOverlay";
 import { detectTemplateVariablesWithAI } from "@/services/mimoService";
 import { TemplateVariable, BrandKit } from "@/lib/types";
 import { applyVariables } from "@/lib/templateVars";
+import { useImageEditor } from "@/hooks/useImageEditor";
+import {
+  highQualityDraw,
+  compressImage,
+  generateSVGChart,
+  downloadChartCSV,
+} from "@/lib/imageUtils";
 
 const SCENE_BADGE: Record<SceneCategory, string> = {
   portrait: "bg-rose-50 text-rose-800 border-rose-100",
@@ -118,32 +126,28 @@ export function ResultView({
   const [pieActiveIndices, setPieActiveIndices] = useState<
     Record<number, number | null>
   >({});
-  const [editingAssetIndex, setEditingAssetIndex] = useState<number | null>(
-    null,
-  );
+  const imageEditor = useImageEditor();
+  // Destructure state, setters, and functions from the hook.
+  const {
+    editingAssetIndex,
+    setEditingAssetIndex,
+    editMode,
+    setEditMode,
+    editParams,
+    setEditParams,
+    cropBox,
+    setCropBox,
+    editHistory,
+    historyIndex,
+    addToHistory,
+    cancelEdit,
+    undo,
+    redo,
+    startEditing: hookStartEditing,
+  } = imageEditor;
   const [replacingAssetIndex, setReplacingAssetIndex] = useState<number | null>(
     null,
   );
-  const [editMode, setEditMode] = useState<"filters" | "crop">("filters");
-  const [editParams, setEditParams] = useState({
-    rotation: 0,
-    scale: 1,
-    brightness: 100,
-    contrast: 100,
-    saturation: 100,
-    flipX: false,
-    flipY: false,
-  });
-  const [cropBox, setCropBox] = useState({
-    x: 10,
-    y: 10,
-    width: 80,
-    height: 80,
-  }); // Percentage of original image
-  const [editHistory, setEditHistory] = useState<
-    Array<{ params: typeof editParams; crop: typeof cropBox }>
-  >([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -153,57 +157,7 @@ export function ResultView({
   const [showDiff, setShowDiff] = useState(false);
   const [diffSlider, setDiffSlider] = useState(50);
 
-  const highQualityDraw = (
-    img: HTMLImageElement | HTMLCanvasElement,
-    sx: number,
-    sy: number,
-    sw: number,
-    sh: number,
-    targetW: number,
-    targetH: number,
-  ): HTMLCanvasElement => {
-    const canvas = document.createElement("canvas");
-    canvas.width = targetW;
-    canvas.height = targetH;
-    const ctx = canvas.getContext("2d", { alpha: true })!;
-
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-
-    if (targetW >= sw * 0.7) {
-      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
-      return canvas;
-    }
-
-    let offscreen = document.createElement("canvas");
-    offscreen.width = sw;
-    offscreen.height = sh;
-    const octx = offscreen.getContext("2d", { alpha: true })!;
-    octx.imageSmoothingEnabled = true;
-    octx.imageSmoothingQuality = "high";
-    octx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
-
-    let curW = sw;
-    let curH = sh;
-
-    while (curW > targetW * 2) {
-      const nextW = Math.floor(curW * 0.5);
-      const nextH = Math.floor(curH * 0.5);
-      const temp = document.createElement("canvas");
-      temp.width = nextW;
-      temp.height = nextH;
-      const tctx = temp.getContext("2d", { alpha: true })!;
-      tctx.imageSmoothingEnabled = true;
-      tctx.imageSmoothingQuality = "high";
-      tctx.drawImage(offscreen, 0, 0, curW, curH, 0, 0, nextW, nextH);
-      offscreen = temp;
-      curW = nextW;
-      curH = nextH;
-    }
-
-    ctx.drawImage(offscreen, 0, 0, curW, curH, 0, 0, targetW, targetH);
-    return canvas;
-  };
+  // highQualityDraw, compressImage, generateSVGChart, downloadChartCSV
 
   useEffect(() => {
     // Process images and charts if there are any detected
@@ -356,253 +310,16 @@ export function ResultView({
     }
   };
 
+  // ── Wrapper delegates to the hook, then syncs processedAssets / processedHtml ──
   const applyEdits = async () => {
-    if (editingAssetIndex === null) return;
-    const asset = processedAssets[editingAssetIndex];
-    if (!asset.originalDataUrl) return;
-
-    const img = new Image();
-    // If in crop mode, we crop from the FULL original reference image
-    img.src = editMode === "crop" ? originalImage : asset.originalDataUrl;
-    await img.decode();
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d", { alpha: true });
-    if (!ctx) return;
-
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-
-    let finalDataUrl = "";
-    let newCropCoords = asset.cropCoords;
-
-    if (editMode === "crop") {
-      // Perform high quality crop from original image
-      const x = Math.floor((cropBox.x / 100) * img.width);
-      const y = Math.floor((cropBox.y / 100) * img.height);
-      const w = Math.ceil((cropBox.width / 100) * img.width);
-      const h = Math.ceil((cropBox.height / 100) * img.height);
-
-      const highResCanvas = highQualityDraw(img, x, y, w, h, w, h);
-      finalDataUrl = highResCanvas.toDataURL("image/jpeg", 0.85);
-      newCropCoords = {
-        xmin: cropBox.x * 10,
-        ymin: cropBox.y * 10,
-        xmax: (cropBox.x + cropBox.width) * 10,
-        ymax: (cropBox.y + cropBox.height) * 10,
-      };
-    } else {
-      // Apply filters and high quality rotate/scale
-      const angle = (editParams.rotation * Math.PI) / 180;
-      const sin = Math.abs(Math.sin(angle));
-      const cos = Math.abs(Math.cos(angle));
-
-      const baseW = img.width * editParams.scale;
-      const baseH = img.height * editParams.scale;
-
-      canvas.width = baseW * cos + baseH * sin;
-      canvas.height = baseH * cos + baseW * sin;
-
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
-      ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate(angle);
-      ctx.scale(editParams.flipX ? -1 : 1, editParams.flipY ? -1 : 1);
-      ctx.filter = `brightness(${editParams.brightness}%) contrast(${editParams.contrast}%) saturate(${editParams.saturation}%)`;
-
-      // Use highQualityDraw for the scaled version too
-      const tempCanvas = highQualityDraw(
-        img,
-        0,
-        0,
-        img.width,
-        img.height,
-        baseW,
-        baseH,
+    const result = await imageEditor.applyEdits(processedAssets, originalImage);
+    if (!result) return;
+    setProcessedAssets(result.updatedAssets);
+    if (processedHtml.includes(result.oldDataUrl)) {
+      setProcessedHtml(
+        processedHtml.replaceAll(result.oldDataUrl, result.newDataUrl),
       );
-      ctx.drawImage(tempCanvas, -baseW / 2, -baseH / 2);
-      finalDataUrl = canvas.toDataURL("image/jpeg", 0.85);
     }
-
-    const newAssets = [...processedAssets];
-    const oldDataUrl = newAssets[editingAssetIndex].dataUrl;
-    newAssets[editingAssetIndex] = {
-      ...asset,
-      dataUrl: finalDataUrl,
-      originalDataUrl:
-        editMode === "crop" ? finalDataUrl : asset.originalDataUrl,
-      cropCoords: newCropCoords,
-    };
-    setProcessedAssets(newAssets);
-
-    // Automatically update HTML if this asset was already used
-    if (processedHtml.includes(oldDataUrl)) {
-      setProcessedHtml(processedHtml.replaceAll(oldDataUrl, finalDataUrl));
-    }
-
-    setEditingAssetIndex(null);
-  };
-
-  const generateSVGChart = (
-    chart: NonNullable<ReplicationResult["detectedCharts"]>[0],
-  ) => {
-    const width = 400;
-    const height = 240;
-    const padding = 40;
-    const chartWidth = width - padding * 2;
-    const chartHeight = height - padding * 2;
-    const colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
-
-    if (chart.type === "pie") {
-      const total = chart.data.reduce(
-        (sum, d) =>
-          sum +
-          ((Object.values(d).find((v) => typeof v === "number") as number) ||
-            0),
-        0,
-      );
-      let currentAngle = 0;
-      const radius = 70;
-      const cx = width / 2;
-      const cy = height / 2;
-
-      return `
-        <svg viewBox="0 0 ${width} ${height}" class="w-full h-full max-h-56">
-          <style>
-            .pie-slice { transition: all 0.3s ease; cursor: pointer; }
-            .pie-slice:hover { filter: brightness(1.1); transform: scale(1.02); transform-origin: center; }
-            .pie-slice.active { transform: scale(1.1); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
-          </style>
-          ${chart.data
-            .map((d, i) => {
-              const val =
-                (Object.values(d).find(
-                  (v) => typeof v === "number",
-                ) as number) || 0;
-              const percentage = val / total;
-              const angle = percentage * 360;
-
-              const x1 = cx + radius * Math.cos((Math.PI * currentAngle) / 180);
-              const y1 = cy + radius * Math.sin((Math.PI * currentAngle) / 180);
-              const x2 =
-                cx +
-                radius * Math.cos((Math.PI * (currentAngle + angle)) / 180);
-              const y2 =
-                cy +
-                radius * Math.sin((Math.PI * (currentAngle + angle)) / 180);
-
-              const largeArcFlag = angle > 180 ? 1 : 0;
-              const dPath = `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
-
-              const midAngle = currentAngle + angle / 2;
-              const labelDist = radius + 25;
-              const lx = cx + labelDist * Math.cos((Math.PI * midAngle) / 180);
-              const ly = cy + labelDist * Math.sin((Math.PI * midAngle) / 180);
-
-              const path = `
-              <g class="pie-slice-group" onclick="this.querySelector('.pie-slice').classList.toggle('active')">
-                <path d="${dPath}" fill="${colors[i % colors.length]}" class="pie-slice">
-                  <title>${Object.values(d)[0]}: ${val}</title>
-                </path>
-                ${percentage > 0.05 ? `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="10" font-weight="bold" fill="#64748b">${Math.round(percentage * 100)}%</text>` : ""}
-              </g>`;
-              currentAngle += angle;
-              return path;
-            })
-            .join("")}
-        </svg>`;
-    }
-
-    const maxValue = Math.max(
-      ...chart.data.map(
-        (d) =>
-          (Object.values(d).find((v) => typeof v === "number") as number) || 0,
-      ),
-      1,
-    );
-    const stepX =
-      chartWidth / (chart.data.length > 1 ? chart.data.length - 1 : 1);
-
-    if (chart.type === "bar") {
-      const barPadding = 10;
-      const barWidth = chartWidth / chart.data.length - barPadding;
-      return `
-        <svg viewBox="0 0 ${width} ${height}" class="w-full h-full max-h-56">
-          <style>
-             .bar { transition: all 0.3s ease; cursor: pointer; }
-             .bar:hover { fill-opacity: 0.8; transform: translate(0, -2px); }
-          </style>
-          <g transform="translate(${padding}, ${padding})">
-            ${chart.data
-              .map((d, i) => {
-                const val =
-                  (Object.values(d).find(
-                    (v) => typeof v === "number",
-                  ) as number) || 0;
-                const h = (val / maxValue) * chartHeight;
-                return `
-                <rect
-                  x="${i * (barWidth + barPadding)}"
-                  y="${chartHeight - h}"
-                  width="${barWidth}"
-                  height="${h}"
-                  fill="${colors[0]}"
-                  rx="6"
-                  class="bar"
-                >
-                  <title>${Object.values(d)[0]}: ${val}</title>
-                </rect>`;
-              })
-              .join("")}
-          </g>
-        </svg>`;
-    }
-
-    if (chart.type === "line" || chart.type === "area") {
-      const points = chart.data.map((d, i) => {
-        const val =
-          (Object.values(d).find((v) => typeof v === "number") as number) || 0;
-        const x = padding + i * stepX;
-        const y = padding + chartHeight - (val / maxValue) * chartHeight;
-        return { x, y, name: Object.values(d)[0], value: val };
-      });
-
-      const polylinePoints = points.map((p) => `${p.x},${p.y}`).join(" ");
-      const areaPoints = `${points[0].x},${padding + chartHeight} ${polylinePoints} ${points[points.length - 1].x},${padding + chartHeight}`;
-
-      return `
-        <svg viewBox="0 0 ${width} ${height}" class="w-full h-full max-h-56">
-          <style>
-            .chart-point { transition: all 0.2s ease; cursor: pointer; }
-            .chart-point:hover { r: 8; stroke-width: 3; }
-          </style>
-          ${
-            chart.type === "area"
-              ? `
-            <defs>
-              <linearGradient id="chart-area-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stop-color="${colors[0]}" stop-opacity="0.3"/>
-                <stop offset="95%" stop-color="${colors[0]}" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <polygon points="${areaPoints}" fill="url(#chart-area-grad)" />
-          `
-              : ""
-          }
-          <polyline points="${polylinePoints}" fill="none" stroke="${colors[0]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-          ${points
-            .map(
-              (p) => `
-            <circle cx="${p.x}" cy="${p.y}" r="5" fill="${colors[0]}" stroke="white" stroke-width="2" class="chart-point">
-              <title>${p.name}: ${p.value}</title>
-            </circle>
-          `,
-            )
-            .join("")}
-        </svg>`;
-    }
-
-    return `<div class="p-8 text-center text-slate-400 font-medium">Simplified ${chart.type} chart representation</div>`;
   };
 
   const downloadCode = () => {
@@ -679,10 +396,6 @@ export function ResultView({
     } else {
       setProcessedCss(value);
     }
-  };
-
-  const cancelEdit = () => {
-    setEditingAssetIndex(null);
   };
 
   const deleteAsset = (index: number) => {
@@ -877,78 +590,9 @@ export function ResultView({
     setActiveTab("preview");
   };
 
+  // ── Delegates to the hook's startEditing with context from ResultView ───
   const startEditing = (index: number) => {
-    setEditingAssetIndex(index);
-    // Only allow crop mode if we have a real original image to crop from
-    setEditMode("filters");
-    const asset = processedAssets[index];
-
-    if (asset?.cropCoords) {
-      setCropBox({
-        x: asset.cropCoords.xmin / 10,
-        y: asset.cropCoords.ymin / 10,
-        width: (asset.cropCoords.xmax - asset.cropCoords.xmin) / 10,
-        height: (asset.cropCoords.ymax - asset.cropCoords.ymin) / 10,
-      });
-    } else {
-      setCropBox({ x: 10, y: 10, width: 80, height: 80 });
-    }
-
-    const initialParams = {
-      rotation: 0,
-      scale: 1,
-      brightness: 100,
-      contrast: 100,
-      saturation: 100,
-      flipX: false,
-      flipY: false,
-    };
-    const initialCrop = asset?.cropCoords
-      ? {
-          x: asset.cropCoords.xmin / 10,
-          y: asset.cropCoords.ymin / 10,
-          width: (asset.cropCoords.xmax - asset.cropCoords.xmin) / 10,
-          height: (asset.cropCoords.ymax - asset.cropCoords.ymin) / 10,
-        }
-      : { x: 10, y: 10, width: 80, height: 80 };
-
-    setEditParams(initialParams);
-    setCropBox(initialCrop);
-    setEditHistory([{ params: initialParams, crop: initialCrop }]);
-    setHistoryIndex(0);
-  };
-
-  const addToHistory = (params: typeof editParams, crop: typeof cropBox) => {
-    const last = editHistory[historyIndex];
-    if (
-      last &&
-      JSON.stringify(last.params) === JSON.stringify(params) &&
-      JSON.stringify(last.crop) === JSON.stringify(crop)
-    )
-      return;
-
-    const newHistory = editHistory.slice(0, historyIndex + 1);
-    newHistory.push({ params, crop });
-    setEditHistory(newHistory);
-    setHistoryIndex(newHistory.length - 1);
-  };
-
-  const undo = () => {
-    if (historyIndex > 0) {
-      const prevState = editHistory[historyIndex - 1];
-      setEditParams(prevState.params);
-      setCropBox(prevState.crop);
-      setHistoryIndex(historyIndex - 1);
-    }
-  };
-
-  const redo = () => {
-    if (historyIndex < editHistory.length - 1) {
-      const nextState = editHistory[historyIndex + 1];
-      setEditParams(nextState.params);
-      setCropBox(nextState.crop);
-      setHistoryIndex(historyIndex + 1);
-    }
+    hookStartEditing(index, processedAssets, originalImage);
   };
 
   const insertAsset = (asset: { description: string; dataUrl: string }) => {
@@ -1763,8 +1407,10 @@ export function ResultView({
                               ) : (
                                 <PieChart>
                                   <Pie
-                                    activeIndex={pieActiveIndices[i] ?? -1}
-                                    activeShape={renderActiveShape}
+                                    {...({
+                                      activeIndex: pieActiveIndices[i] ?? -1,
+                                      activeShape: renderActiveShape,
+                                    } as any)}
                                     data={chart.data}
                                     cx="50%"
                                     cy="50%"
@@ -2009,8 +1655,9 @@ export function ResultView({
                                   dragMomentum={false}
                                   dragElastic={0}
                                   onDrag={(e, info) => {
-                                    const rect =
-                                      e.currentTarget.parentElement?.getBoundingClientRect();
+                                    const rect = (
+                                      e.currentTarget as HTMLElement
+                                    ).parentElement?.getBoundingClientRect();
                                     if (!rect) return;
 
                                     const dx =
