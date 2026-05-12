@@ -12,8 +12,7 @@ import {
 
 export function usePreferences() {
   const [brandKit, setBrandKit] = useState<BrandKit>(loadBrandKit());
-  const [selectedStack, setSelectedStack] =
-    useState<ExportFormat>("react-tailwind");
+  const [selectedStack, setSelectedStack] = useState<ExportFormat>("html");
   const [enableRefinement, setEnableRefinement] = useState(true);
   const [generationMode, setGenerationMode] =
     useState<GenerationMode>("replicate");

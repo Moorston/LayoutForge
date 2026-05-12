@@ -18,7 +18,26 @@
     "variables": "变量",
     "seo": "SEO",
     "a11y": "无障碍",
-    "export": "导出"
+    "export": "导出",
+    "palette": "调色板",
+    "components": "组件",
+    "darkMode": "暗色模式",
+    "heatmap": "热力图",
+    "responsive": "响应式",
+    "designSystem": "设计系统",
+    "figma": "Figma",
+    "templateMarket": "模板市场",
+    "abCompare": "A/B 对比",
+    "versionHistory": "版本历史",
+    "deploy": "部署",
+    "scrollAnimation": "滚动动画",
+    "performance": "性能审计",
+    "multiPage": "多页面",
+    "nativeExport": "原生导出",
+    "testGen": "测试生成",
+    "wcagFix": "WCAG 修复",
+    "cmsAdapter": "CMS 适配",
+    "storybook": "Storybook"
   },
   "url": {
     "placeholder": "粘贴网站链接（例如 apple.com）...",
@@ -30,7 +49,11 @@
   "stack": {
     "reactTailwind": "React + Tailwind",
     "html": "HTML + Tailwind",
-    "vue": "Vue 3"
+    "vue": "Vue + Tailwind",
+    "htmlCss": "HTML + CSS",
+    "bootstrap": "Bootstrap",
+    "ionicTailwind": "Ionic + Tailwind",
+    "svg": "SVG"
   },
   "actions": {
     "save": "保存",
@@ -90,7 +113,165 @@
     "imageType": "图像类型"
   },
   "chat": {
-    "title": "AI 对话优化"
+    "title": "AI 对话优化",
+    "quickCommands": "快捷指令",
+    "layout": "布局",
+    "style": "样式",
+    "components": "组件",
+    "responsive": "响应式",
+    "animation": "动画"
+  },
+  "darkMode": {
+    "title": "暗色模式生成器",
+    "generate": "生成暗色主题",
+    "mediaQuery": "媒体查询（系统）",
+    "toggle": "类切换（.dark）",
+    "preview": "预览暗色模式",
+    "apply": "应用暗色主题"
+  },
+  "heatmap": {
+    "title": "像素对比",
+    "heatmap": "热力图",
+    "difference": "差异图",
+    "highlight": "高亮",
+    "matchScore": "匹配分数",
+    "threshold": "阈值",
+    "opacity": "透明度"
+  },
+  "responsive": {
+    "title": "多断点预览",
+    "mobile": "手机",
+    "tablet": "平板",
+    "desktop": "桌面"
+  },
+  "palette": {
+    "title": "调色板",
+    "extract": "提取颜色",
+    "primary": "主色",
+    "secondary": "辅色",
+    "accent": "强调色",
+    "neutral": "中性色",
+    "semantic": "语义色",
+    "search": "搜索颜色...",
+    "usage": "使用次数"
+  },
+  "componentGallery": {
+    "title": "组件画廊",
+    "extract": "提取组件",
+    "preview": "预览",
+    "copyHtml": "复制 HTML",
+    "noComponents": "尚未提取组件"
+  },
+  "figma": {
+    "title": "Figma 导入",
+    "fileUrl": "Figma 文件链接",
+    "accessToken": "个人访问令牌",
+    "import": "导入",
+    "getToken": "在 figma.com/developers 获取令牌",
+    "selectFrame": "选择要导入的画框"
+  },
+  "designSystem": {
+    "title": "设计系统",
+    "colors": "色彩",
+    "typography": "字体",
+    "spacing": "间距",
+    "effects": "效果",
+    "exportHtml": "导出 HTML",
+    "exportMd": "导出 Markdown"
+  },
+  "templateMarket": {
+    "title": "模板市场",
+    "search": "搜索模板...",
+    "featured": "精选",
+    "useTemplate": "使用模板",
+    "publish": "发布模板",
+    "comingSoon": "即将上线！"
+  },
+  "abCompare": {
+    "title": "多模型 A/B 对比",
+    "preferA": "偏好 A",
+    "preferB": "偏好 B",
+    "autoScore": "自动评分",
+    "model": "模型",
+    "score": "分数"
+  },
+  "versionHistory": {
+    "title": "版本历史",
+    "rollback": "回退",
+    "compare": "对比",
+    "clear": "清空历史",
+    "noVersions": "暂无版本记录",
+    "aiGeneration": "AI 生成",
+    "manualEdit": "手动编辑",
+    "refinement": "AI 优化"
+  },
+  "deploy": {
+    "title": "一键部署",
+    "deploy": "部署",
+    "deploying": "部署中...",
+    "success": "部署成功！",
+    "openSite": "打开网站",
+    "copyUrl": "复制链接",
+    "vercel": "Vercel",
+    "netlify": "Netlify",
+    "github": "GitHub Pages"
+  },
+  "scrollAnimation": {
+    "title": "滚动动画",
+    "apply": "应用到页面",
+    "preview": "预览",
+    "duration": "持续时间",
+    "delay": "延迟",
+    "easing": "缓动"
+  },
+  "performance": {
+    "title": "性能审计",
+    "runAudit": "运行审计",
+    "autoFix": "自动修复全部",
+    "score": "分数",
+    "performance": "性能",
+    "accessibility": "无障碍",
+    "bestPractices": "最佳实践"
+  },
+  "multiPage": {
+    "title": "多页面生成器",
+    "generateAll": "生成所有页面",
+    "sitemap": "站点地图",
+    "exportAll": "导出全部"
+  },
+  "nativeExport": {
+    "title": "原生导出",
+    "reactNative": "React Native",
+    "flutter": "Flutter",
+    "dependencies": "所需依赖"
+  },
+  "testGen": {
+    "title": "测试生成器",
+    "generate": "生成测试",
+    "rendering": "渲染",
+    "content": "内容",
+    "interaction": "交互",
+    "accessibility": "无障碍"
+  },
+  "wcagFix": {
+    "title": "WCAG 自动修复",
+    "runCheck": "运行检查",
+    "autoFix": "自动修复全部",
+    "score": "无障碍分数"
+  },
+  "cmsAdapter": {
+    "title": "CMS 适配器",
+    "wordpress": "WordPress",
+    "shopify": "Shopify",
+    "strapi": "Strapi",
+    "downloadAll": "下载全部",
+    "instructions": "安装说明"
+  },
+  "storybook": {
+    "title": "Storybook 导出",
+    "generate": "生成 Stories",
+    "export": "导出 Storybook",
+    "config": "配置"
   },
   "batch": {
     "title": "批量处理",

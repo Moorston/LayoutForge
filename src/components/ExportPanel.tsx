@@ -17,19 +17,38 @@ interface ExportPanelProps {
 }
 
 const INSTALL_NOTES: Record<ExportFormat, string> = {
-  html: "Open directly in any browser. Tailwind CSS is loaded via CDN — zero build step required.",
+  html: "Open directly in any browser. Tailwind CSS v4 is loaded via CDN — zero build step required.",
+  "html-css":
+    "Pure HTML + CSS — open directly in any browser. No external dependencies needed.",
   "react-tailwind":
     "Install: npm install react react-dom tailwindcss postcss autoprefixer && npx tailwindcss init -p. Then place the component in src/.",
   vue: "Use with Vite + plugin-vue: npm create vite@latest my-app -- --template vue-ts, then copy this SFC.",
+  bootstrap:
+    "Open directly in any browser. Bootstrap 5 CSS is loaded via CDN — zero build step required.",
+  "ionic-tailwind":
+    "Open directly in any browser. Ionic Core and Tailwind CSS are loaded via CDN for preview.",
+  svg: "SVG file — open in any browser, image viewer, or import into design tools like Figma.",
 };
 
 const ACCENT_BORDER: Record<ExportFormat, string> = {
   html: "border-l-orange-400",
+  "html-css": "border-l-amber-400",
   "react-tailwind": "border-l-cyan-400",
   vue: "border-l-emerald-400",
+  bootstrap: "border-l-violet-400",
+  "ionic-tailwind": "border-l-blue-400",
+  svg: "border-l-rose-400",
 };
 
-const FORMATS: ExportFormat[] = ["html", "react-tailwind", "vue"];
+const FORMATS: ExportFormat[] = [
+  "html",
+  "html-css",
+  "react-tailwind",
+  "vue",
+  "bootstrap",
+  "ionic-tailwind",
+  "svg",
+];
 
 export function ExportPanel({ html, css, projectName }: ExportPanelProps) {
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("html");
@@ -96,7 +115,7 @@ export function ExportPanel({ html, css, projectName }: ExportPanelProps) {
         <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-3">
           Format
         </p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {FORMATS.map((fmt) => {
             const meta = FORMAT_META[fmt];
             const isSelected = selectedFormat === fmt;

@@ -458,6 +458,82 @@ The "html" field MUST contain the <template> content ONLY.
 Do NOT include <script setup>, <style>, or <template> tags in the html field.
 The "css" field should contain any additional scoped CSS (prefer empty — use Tailwind classes).`;
 
+    case "html-css":
+      return `=== TECH STACK: HTML + CSS (No Framework) ===
+
+Generate a single self-contained HTML page using plain HTML and CSS only.
+- NO CSS frameworks (no Tailwind, no Bootstrap, no external CSS libraries)
+- ALL styling must be done with custom CSS in a <style> block or the "css" field
+- Use modern CSS features: CSS Grid, Flexbox, CSS custom properties (variables), clamp(), min(), max()
+- Use CSS custom properties for design tokens:
+  :root { --color-primary: #hex; --color-bg: #fff; --font-heading: 'Inter', sans-serif; }
+- Use semantic CSS class names (e.g., .hero, .nav-bar, .card-grid, .btn-primary)
+- Semantic HTML5 structure: header, nav, main, section, article, footer
+- Proper heading hierarchy: h1 → h2 → h3 (no skipping)
+- Responsive: use CSS media queries, mobile-first approach
+- Use CSS Grid and Flexbox for layouts instead of floats or absolute positioning
+- Accessibility: alt text, ARIA attributes, keyboard navigation, color contrast (WCAG AA)
+
+Output the "html" field as the <body> content only — no <head>, no <script> tags.
+Output the "css" field as all custom CSS rules (without <style> tags).`;
+
+    case "bootstrap":
+      return `=== TECH STACK: HTML + Bootstrap 5 ===
+
+Generate a single self-contained HTML page using Bootstrap 5 CSS framework.
+- Use Bootstrap 5 utility classes and components for all styling
+- DO NOT include any <script> tags or CDN links — the rendering environment provides Bootstrap
+- Use Bootstrap grid system: container, row, col-*, col-sm-*, col-md-*, col-lg-*, col-xl-*
+- Use Bootstrap components: navbar, card, btn, badge, alert, modal, carousel, accordion
+- Use Bootstrap utility classes: d-flex, justify-content-*, align-items-*, gap-*, p-*, m-*, text-*, bg-*
+- Customize with Bootstrap CSS custom properties: --bs-primary, --bs-secondary, etc.
+- Use Bootstrap spacing scale: p-0 through p-5, m-0 through m-5
+- Semantic HTML5 structure: header, nav, main, section, article, footer
+- Proper heading hierarchy: h1 → h2 → h3 (no skipping)
+- Responsive: Bootstrap breakpoints (sm: 576px, md: 768px, lg: 992px, xl: 1200px, xxl: 1400px)
+- Accessibility: alt text, ARIA attributes, keyboard navigation, color contrast (WCAG AA)
+
+Output the "html" field as the <body> content only — no <head>, no <script> tags.
+Output the "css" field as any additional custom CSS beyond Bootstrap utilities.`;
+
+    case "ionic-tailwind":
+      return `=== TECH STACK: Ionic + Tailwind CSS ===
+
+Generate a production-grade Ionic page using web components with Tailwind CSS for styling.
+- Use Ionic web components: <ion-header>, <ion-toolbar>, <ion-title>, <ion-content>, <ion-footer>
+- Use Ionic UI components: <ion-button>, <ion-card>, <ion-card-header>, <ion-card-content>, <ion-list>, <ion-item>, <ion-input>, <ion-label>, <ion-icon>, <ion-fab>, <ion-tabs>, <ion-segment>, <ion-chip>, <ion-badge>, <ion-avatar>, <ion-skeleton>
+- Use Tailwind CSS utility classes for custom styling on Ionic components and HTML elements
+- Use Ionic's CSS custom properties for theming: --ion-color-primary, --ion-background-color, etc.
+- Ionic components use Shadow DOM — apply Tailwind classes to wrapper elements, not directly on Ionic components
+- Use <ion-grid>, <ion-row>, <ion-col> for Ionic's responsive grid, or use Tailwind grid/flex utilities on wrapper divs
+- Mobile-first design optimized for both mobile and desktop
+- Semantic HTML5 structure where possible within Ionic constraints
+- Accessibility: Ionic components have built-in ARIA, add alt text on images, keyboard navigation
+
+Output the "html" field as the page content with Ionic web components.
+Output the "css" field as any additional custom CSS or Tailwind overrides.`;
+
+    case "svg":
+      return `=== TECH STACK: SVG ===
+
+Generate a self-contained SVG that recreates the visual layout from the screenshot.
+- Output a complete, well-formed SVG element as the "html" field
+- Use SVG elements: <svg>, <rect>, <circle>, <ellipse>, <line>, <polyline>, <polygon>, <path>, <text>, <tspan>, <g>, <defs>, <use>, <linearGradient>, <radialGradient>, <pattern>, <clipPath>, <mask>, <filter>
+- Use viewBox for responsive scaling (e.g., viewBox="0 0 1280 800")
+- Use <text> elements for all text content with proper font attributes: font-family, font-size, font-weight, fill
+- Use <rect> for cards, containers, buttons, and rectangular shapes
+- Use <g> for grouping related elements with transform for positioning
+- Use fill, stroke, stroke-width, opacity for styling — no CSS classes
+- For gradients, use <linearGradient> or <radialGradient> inside <defs>
+- For shadows or blur effects, use SVG <filter> elements
+- For rounded rectangles, use rx and ry attributes on <rect>
+- Color matching: extract exact hex values from the image for fill and stroke attributes
+- Preserve visual hierarchy: z-order via element order (later elements render on top)
+- Use preserveAspectRatio="xMidYMid meet" for proper scaling
+
+Output the "html" field as the complete <svg> element (include the <svg> tag with xmlns).
+Output the "css" field as EMPTY — all styling is done via SVG attributes.`;
+
     case "html":
     default:
       return `=== TECH STACK: HTML + Tailwind CSS ===
@@ -509,6 +585,59 @@ function getStackSpecificQualityRequirements(stack: ExportFormat): string {
 - Slots: <slot /> for default content, <slot name="header" /> for named slots
 - Do NOT use className, onClick, htmlFor — these are JSX, not Vue`;
 
+    case "html-css":
+      return `
+=== HTML + CSS QUALITY REQUIREMENTS ===
+- Use semantic class names: .hero-section, .card-grid, .nav-bar, .btn-primary
+- CSS custom properties for design tokens in :root {}
+- Mobile-first media queries: @media (min-width: 640px), @media (min-width: 768px), etc.
+- Use modern layout: CSS Grid for page layouts, Flexbox for component layouts
+- Avoid floats, clearfixes, or table-based layouts
+- No inline styles — all CSS in the css field or <style> block
+- Consistent spacing rhythm using CSS custom properties
+- Use CSS transitions for hover/focus states`;
+
+    case "bootstrap":
+      return `
+=== BOOTSTRAP 5 QUALITY REQUIREMENTS ===
+- Use Bootstrap 5 utility classes, NOT Bootstrap 4 (no jQuery, no data-toggle, use data-bs-toggle)
+- Grid: container > row > col-*, with responsive variants: col-sm-*, col-md-*, col-lg-*, col-xl-*
+- Components: use Bootstrap's component classes (btn, card, navbar, etc.)
+- Spacing: use Bootstrap's spacing utilities (p-0 to p-5, m-0 to m-5, gap-*)
+- Display utilities: d-none, d-block, d-flex, d-grid
+- Text utilities: text-center, text-start, text-end, text-muted, text-primary
+- Background utilities: bg-primary, bg-light, bg-dark, bg-white
+- For custom Bootstrap theming, use --bs-primary, --bs-secondary CSS custom properties
+- Do NOT use Tailwind classes (no flex, no p-4, no text-lg — use Bootstrap equivalents)
+- Do NOT use jQuery or Bootstrap JS — only CSS classes`;
+
+    case "ionic-tailwind":
+      return `
+=== IONIC + TAILWIND QUALITY REQUIREMENTS ===
+- Ionic components must use their proper tag names: <ion-button>, <ion-card>, etc.
+- Apply Tailwind classes to wrapper <div> elements, not directly on Ionic Shadow DOM components
+- Use Ionic's theming CSS custom properties: --ion-color-primary, --ion-background-color, --ion-text-color
+- Use <ion-content> as the main scrollable area of the page
+- Use <ion-toolbar> + <ion-buttons> for navigation bars
+- Use <ion-grid> + <ion-row> + <ion-col> OR Tailwind grid on wrapper divs
+- Use <ion-card> for card layouts, <ion-list> + <ion-item> for list views
+- Button variants: <ion-button fill="outline">, <ion-button fill="clear">
+- Color attributes: <ion-button color="primary">, <ion-badge color="danger">
+- Do NOT nest Ionic components incorrectly — follow Ionic's component hierarchy`;
+
+    case "svg":
+      return `
+=== SVG QUALITY REQUIREMENTS ===
+- Use viewBox for coordinate system (e.g., viewBox="0 0 1280 800")
+- Set width="100%" height="100%" on the root <svg> for responsiveness
+- Use <text> with proper attributes: x, y, font-family, font-size, font-weight, fill, text-anchor
+- Use <g transform="translate(x,y)")> for positioning groups
+- Match colors EXACTLY using fill="#hex" and stroke="#hex" attributes
+- Use <linearGradient> and <radialGradient> for gradient backgrounds
+- Layering: draw background elements first, foreground elements last
+- All text must use <text> elements (not foreignObject)
+- No external dependencies — the SVG must be fully self-contained`;
+
     case "html":
     default:
       return "";
@@ -556,6 +685,62 @@ The "css" field MUST contain the content for <style scoped>, including ALL desig
 }
 
 Do NOT include <style scoped> tags — just the CSS rules.`;
+
+    case "html-css":
+      return `=== OUTPUT FORMAT FOR HTML + CSS ===
+
+The "html" field MUST contain the full page template with a <style> tag at the top containing ALL CSS custom properties:
+<style>
+  :root {
+    --color-primary: #hex;
+    /* ... */
+  }
+  /* component styles */
+</style>
+<!-- Page content -->
+<div>...</div>
+
+The "css" field should be EMPTY — all CSS goes inside the <style> tag in the html field.
+Use semantic class names (.hero, .card-grid, .btn-primary) that reference the CSS custom properties.`;
+
+    case "bootstrap":
+      return `=== OUTPUT FORMAT FOR BOOTSTRAP ===
+
+The "html" field MUST contain the full page template with Bootstrap classes.
+Use Bootstrap's theming CSS custom properties (--bs-primary, --bs-secondary, etc.) for customization.
+
+The "css" field MUST contain a :root {} block with all design tokens:
+:root {
+  --bs-primary: #hex;
+  --bs-secondary: #hex;
+  /* Bootstrap theme overrides */
+}
+
+Use Bootstrap utility classes (container, row, col-*, btn, card, etc.) for layout and components.`;
+
+    case "ionic-tailwind":
+      return `=== OUTPUT FORMAT FOR IONIC + TAILWIND ===
+
+The "html" field MUST contain the page markup using Ionic web components.
+Use Tailwind classes on wrapper elements for styling.
+
+The "css" field MUST contain a :root {} block with all design tokens:
+:root {
+  --ion-color-primary: #hex;
+  --ion-background-color: #hex;
+  /* ... */
+}
+
+Use Ionic's CSS custom properties for theming. Tailwind utility classes on wrapper divs for layout.`;
+
+    case "svg":
+      return `=== OUTPUT FORMAT FOR SVG ===
+
+The "html" field MUST contain the complete <svg> element with inline attributes for all styling.
+Use <defs> for reusable gradients, filters, and patterns.
+Use <g> groups with transform for positioning.
+
+The "css" field should be EMPTY — all styling is done via SVG attributes (fill, stroke, etc.).`;
 
     case "html":
     default:

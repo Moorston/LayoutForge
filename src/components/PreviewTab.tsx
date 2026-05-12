@@ -6,7 +6,6 @@ import {
   ImageSceneClassification,
   SceneCategory,
 } from "@/services/mimoService";
-import { PixelReplicaPanel } from "./PixelReplicaPanel";
 import { DevicePreview } from "./DevicePreview";
 
 const SCENE_BADGE: Record<SceneCategory, string> = {
@@ -43,12 +42,7 @@ export function PreviewTab({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className={cn(
-        "grid grid-cols-1 gap-12 mx-auto h-full",
-        originalImage.startsWith("data:")
-          ? "lg:grid-cols-3 max-w-[2100px]"
-          : "lg:grid-cols-2 max-w-[1700px]",
-      )}
+      className="grid grid-cols-1 gap-12 mx-auto h-full lg:grid-cols-2 max-w-[1700px]"
     >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -78,11 +72,7 @@ export function PreviewTab({
         </div>
         <div className="rounded-2xl border border-slate-200 shadow-2xl bg-white overflow-hidden ring-1 ring-black/5">
           {originalImage.startsWith("data:") ? (
-            <img
-              src={originalImage}
-              alt="Original"
-              className="w-full h-auto"
-            />
+            <img src={originalImage} alt="Original" className="w-full h-auto" />
           ) : (
             <div className="aspect-video bg-slate-50 flex flex-col items-center justify-center p-12 text-center">
               <Globe className="w-12 h-12 text-slate-200 mb-4" />
@@ -97,15 +87,6 @@ export function PreviewTab({
           )}
         </div>
       </div>
-
-      {originalImage.startsWith("data:") && (
-        <div className="flex flex-col gap-6">
-          <PixelReplicaPanel
-            originalImage={originalImage}
-            scene={sceneClassification ?? undefined}
-          />
-        </div>
-      )}
 
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">

@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   PackageOpen,
   Search,
+  Wrench,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type {
@@ -51,6 +52,7 @@ import { ExportPanel } from "./ExportPanel";
 import { AccessibilityPanel } from "./AccessibilityPanel";
 import { SEOPanel } from "./SEOPanel";
 import { ImageEditorModal } from "./ImageEditorModal";
+import { ToolboxPanel } from "./ToolboxPanel";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -60,7 +62,8 @@ type TabID =
   | "variables"
   | "seo"
   | "accessibility"
-  | "export";
+  | "export"
+  | "tools";
 
 interface Asset {
   description: string;
@@ -537,6 +540,7 @@ export function ResultView({
     { id: "seo" as const, icon: Search, label: "SEO" },
     { id: "accessibility" as const, icon: ShieldCheck, label: "A11y" },
     { id: "export" as const, icon: PackageOpen, label: "Export" },
+    { id: "tools" as const, icon: Wrench, label: "Tools" },
   ];
 
   return (
@@ -783,6 +787,25 @@ export function ResultView({
                 html={processedHtml}
                 css={processedCss}
                 projectName={undefined}
+              />
+            </motion.div>
+          )}
+
+          {activeTab === "tools" && (
+            <motion.div
+              key="tools"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="max-w-5xl mx-auto"
+            >
+              <ToolboxPanel
+                html={processedHtml}
+                css={processedCss}
+                originalImage={originalImage}
+                iframeContent={iframeContent}
+                onHtmlChange={setProcessedHtml}
+                onCssChange={setProcessedCss}
               />
             </motion.div>
           )}

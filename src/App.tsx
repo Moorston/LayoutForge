@@ -372,12 +372,32 @@ function App() {
                 {(
                   [
                     {
-                      key: "react-tailwind",
-                      label: "React + Tailwind",
-                      icon: "⚛️",
+                      key: "html",
+                      label: t("stack.html"),
+                      icon: "\ud83c\udf10",
                     },
-                    { key: "html", label: "HTML + Tailwind", icon: "🌐" },
-                    { key: "vue", label: "Vue 3", icon: "💚" },
+                    {
+                      key: "react-tailwind",
+                      label: t("stack.reactTailwind"),
+                      icon: "\u269b\ufe0f",
+                    },
+                    { key: "vue", label: t("stack.vue"), icon: "\ud83d\udc9a" },
+                    {
+                      key: "html-css",
+                      label: t("stack.htmlCss"),
+                      icon: "\ud83d\udcbb",
+                    },
+                    {
+                      key: "bootstrap",
+                      label: t("stack.bootstrap"),
+                      icon: "\ud83d\udfe2",
+                    },
+                    {
+                      key: "ionic-tailwind",
+                      label: t("stack.ionicTailwind"),
+                      icon: "\ud83d\udcf1",
+                    },
+                    { key: "svg", label: t("stack.svg"), icon: "\ud83c\udfa8" },
                   ] as const
                 ).map((s) => (
                   <button

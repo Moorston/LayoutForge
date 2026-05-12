@@ -18,7 +18,26 @@
     "variables": "Variables",
     "seo": "SEO",
     "a11y": "A11y",
-    "export": "Export"
+    "export": "Export",
+    "palette": "Palette",
+    "components": "Components",
+    "darkMode": "Dark Mode",
+    "heatmap": "Heatmap",
+    "responsive": "Responsive",
+    "designSystem": "Design System",
+    "figma": "Figma",
+    "templateMarket": "Templates",
+    "abCompare": "A/B Compare",
+    "versionHistory": "History",
+    "deploy": "Deploy",
+    "scrollAnimation": "Animations",
+    "performance": "Audit",
+    "multiPage": "Multi-Page",
+    "nativeExport": "Native",
+    "testGen": "Tests",
+    "wcagFix": "WCAG Fix",
+    "cmsAdapter": "CMS",
+    "storybook": "Storybook"
   },
   "url": {
     "placeholder": "Paste website URL (e.g. apple.com)...",
@@ -30,7 +49,11 @@
   "stack": {
     "reactTailwind": "React + Tailwind",
     "html": "HTML + Tailwind",
-    "vue": "Vue 3"
+    "vue": "Vue + Tailwind",
+    "htmlCss": "HTML + CSS",
+    "bootstrap": "Bootstrap",
+    "ionicTailwind": "Ionic + Tailwind",
+    "svg": "SVG"
   },
   "actions": {
     "save": "Save",
@@ -90,7 +113,165 @@
     "imageType": "图像类型"
   },
   "chat": {
-    "title": "AI Chat Refinement"
+    "title": "AI Chat Refinement",
+    "quickCommands": "Quick Commands",
+    "layout": "Layout",
+    "style": "Style",
+    "components": "Components",
+    "responsive": "Responsive",
+    "animation": "Animation"
+  },
+  "darkMode": {
+    "title": "Dark Mode Generator",
+    "generate": "Generate Dark Theme",
+    "mediaQuery": "Media Query (System)",
+    "toggle": "Class Toggle (.dark)",
+    "preview": "Preview Dark Mode",
+    "apply": "Apply Dark Theme"
+  },
+  "heatmap": {
+    "title": "Pixel Comparison",
+    "heatmap": "Heatmap",
+    "difference": "Difference",
+    "highlight": "Highlight",
+    "matchScore": "Match Score",
+    "threshold": "Threshold",
+    "opacity": "Opacity"
+  },
+  "responsive": {
+    "title": "Multi-Breakpoint Preview",
+    "mobile": "Mobile",
+    "tablet": "Tablet",
+    "desktop": "Desktop"
+  },
+  "palette": {
+    "title": "Color Palette",
+    "extract": "Extract Colors",
+    "primary": "Primary",
+    "secondary": "Secondary",
+    "accent": "Accent",
+    "neutral": "Neutral",
+    "semantic": "Semantic",
+    "search": "Search colors...",
+    "usage": "Usage"
+  },
+  "componentGallery": {
+    "title": "Component Gallery",
+    "extract": "Extract Components",
+    "preview": "Preview",
+    "copyHtml": "Copy HTML",
+    "noComponents": "No components extracted yet"
+  },
+  "figma": {
+    "title": "Figma Import",
+    "fileUrl": "Figma File URL",
+    "accessToken": "Personal Access Token",
+    "import": "Import",
+    "getToken": "Get your token at figma.com/developers",
+    "selectFrame": "Select a frame to import"
+  },
+  "designSystem": {
+    "title": "Design System",
+    "colors": "Colors",
+    "typography": "Typography",
+    "spacing": "Spacing",
+    "effects": "Effects",
+    "exportHtml": "Export HTML",
+    "exportMd": "Export Markdown"
+  },
+  "templateMarket": {
+    "title": "Template Market",
+    "search": "Search templates...",
+    "featured": "Featured",
+    "useTemplate": "Use Template",
+    "publish": "Publish Template",
+    "comingSoon": "Coming Soon!"
+  },
+  "abCompare": {
+    "title": "Multi-Model A/B Compare",
+    "preferA": "Prefer A",
+    "preferB": "Prefer B",
+    "autoScore": "Auto Score",
+    "model": "Model",
+    "score": "Score"
+  },
+  "versionHistory": {
+    "title": "Version History",
+    "rollback": "Rollback",
+    "compare": "Compare",
+    "clear": "Clear History",
+    "noVersions": "No versions saved yet",
+    "aiGeneration": "AI Generation",
+    "manualEdit": "Manual Edit",
+    "refinement": "Refinement"
+  },
+  "deploy": {
+    "title": "One-Click Deploy",
+    "deploy": "Deploy",
+    "deploying": "Deploying...",
+    "success": "Deployed!",
+    "openSite": "Open Site",
+    "copyUrl": "Copy URL",
+    "vercel": "Vercel",
+    "netlify": "Netlify",
+    "github": "GitHub Pages"
+  },
+  "scrollAnimation": {
+    "title": "Scroll Animations",
+    "apply": "Apply to Page",
+    "preview": "Preview",
+    "duration": "Duration",
+    "delay": "Delay",
+    "easing": "Easing"
+  },
+  "performance": {
+    "title": "Performance Audit",
+    "runAudit": "Run Audit",
+    "autoFix": "Auto-fix All",
+    "score": "Score",
+    "performance": "Performance",
+    "accessibility": "Accessibility",
+    "bestPractices": "Best Practices"
+  },
+  "multiPage": {
+    "title": "Multi-Page Generator",
+    "generateAll": "Generate All Pages",
+    "sitemap": "Site Map",
+    "exportAll": "Export All"
+  },
+  "nativeExport": {
+    "title": "Native Export",
+    "reactNative": "React Native",
+    "flutter": "Flutter",
+    "dependencies": "Required Dependencies"
+  },
+  "testGen": {
+    "title": "Test Generator",
+    "generate": "Generate Tests",
+    "rendering": "Rendering",
+    "content": "Content",
+    "interaction": "Interaction",
+    "accessibility": "Accessibility"
+  },
+  "wcagFix": {
+    "title": "WCAG Auto-fix",
+    "runCheck": "Run Check",
+    "autoFix": "Auto-fix All",
+    "score": "Accessibility Score"
+  },
+  "cmsAdapter": {
+    "title": "CMS Adapter",
+    "wordpress": "WordPress",
+    "shopify": "Shopify",
+    "strapi": "Strapi",
+    "downloadAll": "Download All",
+    "instructions": "Setup Instructions"
+  },
+  "storybook": {
+    "title": "Storybook Export",
+    "generate": "Generate Stories",
+    "export": "Export Storybook",
+    "config": "Configuration"
   },
   "batch": {
     "title": "Batch Processing",

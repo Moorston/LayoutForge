@@ -13,6 +13,12 @@ import { refineLayout } from "@/services/mimoService";
 import { ChatMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
+  QUICK_COMMANDS,
+  getCommandCategories,
+  getCommandsByCategory,
+  type QuickCommand,
+} from "@/lib/quickCommands";
+import {
   CHAT_MAX_CHARS,
   CHAT_WARNING_CHARS,
   CHAT_TEXTAREA_MAX_HEIGHT,
@@ -30,12 +36,13 @@ interface ChatPanelProps {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const QUICK_SUGGESTIONS = [
-  "Make navbar sticky and add blur backdrop",
-  "Improve mobile responsiveness",
-  "Add smooth hover animations",
-  "Convert color scheme to dark mode",
-] as const;
+const CATEGORY_ICONS: Record<string, string> = {
+  Layout: "📐",
+  Style: "🎨",
+  Components: "🧩",
+  Responsive: "📱",
+  Animation: "🎭",
+};
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -102,6 +109,7 @@ export function ChatPanel({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -323,18 +331,61 @@ export function ChatPanel({
                     Describe what to change...
                   </p>
 
-                  {/* Quick suggestion chips */}
-                  <div className="w-full space-y-2">
-                    {QUICK_SUGGESTIONS.map((suggestion) => (
+                  {/* Category tabs */}
+                  <div className="w-full">
+                    <div className="flex gap-1 mb-3 overflow-x-auto pb-1">
                       <button
-                        key={suggestion}
-                        onClick={() => injectSuggestion(suggestion)}
-                        className="w-full text-left text-xs text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 transition-all group"
+                        onClick={() => setSelectedCategory(null)}
+                        className={cn(
+                          "px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all whitespace-nowrap",
+                          !selectedCategory
+                            ? "bg-indigo-600 text-white border-indigo-600"
+                            : "bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-600",
+                        )}
                       >
-                        <ChevronRight className="w-3 h-3 flex-shrink-0 text-indigo-400 group-hover:translate-x-0.5 transition-transform" />
-                        <span>{suggestion}</span>
+                        All
                       </button>
-                    ))}
+                      {getCommandCategories().map((cat) => (
+                        <button
+                          key={cat}
+                          onClick={() => setSelectedCategory(cat)}
+                          className={cn(
+                            "px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all whitespace-nowrap",
+                            selectedCategory === cat
+                              ? "bg-indigo-600 text-white border-indigo-600"
+                              : "bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-600",
+                          )}
+                        >
+                          {CATEGORY_ICONS[cat] || "💡"} {cat}
+                        </button>
+                      ))}
+                    </div>
+                    {/* Command chips */}
+                    <div className="space-y-1.5 max-h-[40vh] overflow-y-auto">
+                      {(selectedCategory
+                        ? getCommandsByCategory(selectedCategory)
+                        : QUICK_COMMANDS
+                      )
+                        .slice(0, 12)
+                        .map((cmd) => (
+                          <button
+                            key={cmd.id}
+                            onClick={() => injectSuggestion(cmd.prompt)}
+                            className="w-full text-left text-xs text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 transition-all group"
+                          >
+                            <span className="shrink-0 text-sm">{cmd.icon}</span>
+                            <span className="flex-1 min-w-0">
+                              <span className="block font-semibold text-slate-300 group-hover:text-white transition-colors truncate">
+                                {cmd.label}
+                              </span>
+                              <span className="block text-[10px] text-slate-500 truncate">
+                                {cmd.labelZh}
+                              </span>
+                            </span>
+                            <ChevronRight className="w-3 h-3 shrink-0 text-indigo-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                          </button>
+                        ))}
+                    </div>
                   </div>
                 </div>
               ) : (

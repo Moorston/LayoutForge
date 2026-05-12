@@ -87,6 +87,114 @@ ${indentCode(html, 2)}
   };
 }
 
+function exportAsHtmlCss(
+  html: string,
+  css: string,
+  pageName = "index",
+): ExportResult {
+  const content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${pageName}</title>
+  <style>
+${indentCode(css, 4)}
+  </style>
+</head>
+<body>
+${indentCode(html, 2)}
+</body>
+</html>`;
+
+  return {
+    format: "html-css",
+    filename: `${pageName}.html`,
+    content,
+    language: "html",
+  };
+}
+
+function exportAsBootstrap(
+  html: string,
+  css: string,
+  pageName = "index",
+): ExportResult {
+  const content = `<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${pageName}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YcnS/1lK2JQp3vQ5JoZvl8/0RE6E3O5o9rV" crossorigin="anonymous" />
+  <style>
+${indentCode(css, 4)}
+  </style>
+</head>
+<body>
+${indentCode(html, 2)}
+</body>
+</html>`;
+
+  return {
+    format: "bootstrap",
+    filename: `${pageName}.html`,
+    content,
+    language: "html",
+  };
+}
+
+function exportAsIonicTailwind(
+  html: string,
+  css: string,
+  pageName = "index",
+): ExportResult {
+  const content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${pageName}</title>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core@8/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core@8/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core@8/css/ionic.bundle.css" />
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <style>
+${indentCode(css, 4)}
+  </style>
+</head>
+<body>
+${indentCode(html, 2)}
+</body>
+</html>`;
+
+  return {
+    format: "ionic-tailwind",
+    filename: `${pageName}.html`,
+    content,
+    language: "html",
+  };
+}
+
+function exportAsSvg(
+  html: string,
+  _css: string,
+  pageName = "index",
+): ExportResult {
+  // SVG output: the html field should contain the <svg> element
+  const svgContent = html.trim().startsWith("<svg")
+    ? html
+    : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="100%" height="100%">\n${indentCode(html, 2)}\n</svg>`;
+
+  return {
+    format: "svg",
+    filename: `${pageName}.svg`,
+    content: svgContent,
+    language: "html",
+  };
+}
+
 function exportAsVue(
   html: string,
   css: string,
@@ -205,10 +313,18 @@ export function exportCode(
   switch (format) {
     case "html":
       return exportAsHtml(html, css, name);
+    case "html-css":
+      return exportAsHtmlCss(html, css, name);
     case "react-tailwind":
       return exportAsReactTailwind(html, css, name);
     case "vue":
       return exportAsVue(html, css, name);
+    case "bootstrap":
+      return exportAsBootstrap(html, css, name);
+    case "ionic-tailwind":
+      return exportAsIonicTailwind(html, css, name);
+    case "svg":
+      return exportAsSvg(html, css, name);
     default:
       return exportAsHtml(html, css, name);
   }
@@ -231,21 +347,45 @@ export const FORMAT_META: Record<
   { label: string; icon: string; desc: string; color: string }
 > = {
   html: {
-    label: "HTML",
-    icon: "🌐",
-    desc: "Single-file HTML with Tailwind CDN",
+    label: "HTML + Tailwind",
+    icon: "\ud83c\udf10",
+    desc: "Single-file HTML with Tailwind CSS v4",
     color: "text-orange-600 bg-orange-50 border-orange-200",
+  },
+  "html-css": {
+    label: "HTML + CSS",
+    icon: "\ud83d\udcbb",
+    desc: "Plain HTML and CSS, no framework",
+    color: "text-amber-600 bg-amber-50 border-amber-200",
   },
   "react-tailwind": {
     label: "React + Tailwind",
-    icon: "⚛️",
+    icon: "\u269b\ufe0f",
     desc: "React component with Tailwind CSS classes",
     color: "text-cyan-600 bg-cyan-50 border-cyan-200",
   },
   vue: {
-    label: "Vue 3",
-    icon: "💚",
-    desc: "Single File Component with <script setup>",
+    label: "Vue + Tailwind",
+    icon: "\ud83d\udc9a",
+    desc: "Vue 3 SFC with <script setup> and Tailwind",
     color: "text-emerald-600 bg-emerald-50 border-emerald-200",
+  },
+  bootstrap: {
+    label: "Bootstrap",
+    icon: "\ud83d\udfe2",
+    desc: "HTML with Bootstrap 5 framework",
+    color: "text-violet-600 bg-violet-50 border-violet-200",
+  },
+  "ionic-tailwind": {
+    label: "Ionic + Tailwind",
+    icon: "\ud83d\udcf1",
+    desc: "Ionic web components with Tailwind CSS",
+    color: "text-blue-600 bg-blue-50 border-blue-200",
+  },
+  svg: {
+    label: "SVG",
+    icon: "\ud83c\udfa8",
+    desc: "Scalable Vector Graphics output",
+    color: "text-rose-600 bg-rose-50 border-rose-200",
   },
 };

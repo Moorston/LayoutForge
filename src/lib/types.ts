@@ -117,7 +117,14 @@ export const DEFAULT_SEO_DATA: SEOData = {
 
 // ─── Export ───────────────────────────────────────────────────────────────────
 
-export type ExportFormat = "html" | "react-tailwind" | "vue";
+export type ExportFormat =
+  | "html" // HTML + Tailwind CSS (default)
+  | "html-css" // HTML + plain CSS (no framework)
+  | "react-tailwind" // React + Tailwind CSS
+  | "vue" // Vue 3 + Tailwind CSS
+  | "bootstrap" // HTML + Bootstrap 5
+  | "ionic-tailwind" // Ionic + Tailwind CSS
+  | "svg"; // SVG output
 
 /** Generation mode: 'replicate' for pixel-perfect copy, 'template' for reusable style template */
 export type GenerationMode = "replicate" | "template";
