@@ -26,6 +26,7 @@ import {
   Accessibility,
   Database,
   Wand2,
+  Search,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -271,6 +272,7 @@ export function ToolboxPanel({
   onCssChange,
 }: ToolboxPanelProps) {
   const [activeTool, setActiveTool] = useState<ToolID | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleBack = useCallback(() => setActiveTool(null), []);
 
@@ -313,6 +315,10 @@ export function ToolboxPanel({
 
   // ── Render tool grid ──────────────────────────────────────────────────────
 
+  const filteredTools = searchQuery.trim()
+    ? TOOLS.filter((t) => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.desc.toLowerCase().includes(searchQuery.toLowerCase()) || t.category.toLowerCase().includes(searchQuery.toLowerCase()))
+    : TOOLS;
+
   return (
     <motion.div
       key="toolbox-grid"
@@ -321,8 +327,14 @@ export function ToolboxPanel({
       exit={{ opacity: 0, y: -10 }}
       className="flex flex-col gap-8"
     >
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input type="text" placeholder="Search tools..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+          aria-label="Search tools" />
+      </div>
       {CATEGORY_ORDER.map((cat) => {
-        const tools = TOOLS.filter((t) => t.category === cat);
+        const tools = filteredTools.filter((t) => t.category === cat);
         if (tools.length === 0) return null;
         return (
           <div key={cat}>

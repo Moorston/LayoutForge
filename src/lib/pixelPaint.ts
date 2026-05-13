@@ -272,12 +272,50 @@ const COL_LBL: Record<PixelBand["columnStructure"], string> = {
 
 /**
  * Analyse the layout structure of an uploaded image via pixel sampling.
- * Returns quantitative proportions + palette for injection into the AI prompt,
- * enabling the AI to replicate the exact visual weight of each section.
+ * Uses a Web Worker when available for non-blocking analysis, falls back
+ * to main-thread execution.
  *
  * Only works with data: URLs or same-origin URLs (browser canvas policy).
  */
 export function analyzePixelLayout(
+  imageDataUrl: string,
+  numBands = 8,
+  sampleSize = 80,
+): Promise<PixelLayoutAnalysis> {
+  return runPixelAnalysisWithWorker(imageDataUrl, numBands, sampleSize);
+}
+
+async function runPixelAnalysisWithWorker(
+  imageDataUrl: string,
+  numBands: number,
+  sampleSize: number,
+): Promise<PixelLayoutAnalysis> {
+  try {
+    const WorkerClass = (await import("../workers/pixelAnalysis.worker.ts?worker")).default;
+    const worker = new WorkerClass();
+    return await new Promise<PixelLayoutAnalysis>((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        worker.terminate();
+        reject(new Error("Worker timeout"));
+      }, 30000);
+      worker.onmessage = (e: MessageEvent) => {
+        clearTimeout(timeoutId);
+        resolve(e.data as PixelLayoutAnalysis);
+      };
+      worker.onerror = () => {
+        clearTimeout(timeoutId);
+        worker.terminate();
+        reject(new Error("Worker analysis failed"));
+      };
+      worker.postMessage({ imageDataUrl, numBands, sampleSize });
+    });
+  } catch {
+    return analyzePixelLayoutMainThread(imageDataUrl, numBands, sampleSize);
+  }
+}
+
+/** Fallback main-thread implementation */
+export function analyzePixelLayoutMainThread(
   imageDataUrl: string,
   numBands = 8,
   sampleSize = 80,
